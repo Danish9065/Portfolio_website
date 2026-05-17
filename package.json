@@ -1,0 +1,11 @@
+{
+  "name": "portfolio-webapp",
+  "private": true,
+  "scripts": {
+    "dev:frontend": "npm --prefix frontend run dev",
+    "build:frontend": "npm --prefix frontend run build",
+    "lint:frontend": "npm --prefix frontend run lint",
+    "dev:backend": "uvicorn app.main:app --reload --app-dir backend",
+    "test:backend": "pytest backend/tests"
+  }
+}
