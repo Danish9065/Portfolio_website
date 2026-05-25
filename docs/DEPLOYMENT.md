@@ -9,7 +9,7 @@ Frontend:
 Backend:
 
 - Deploy `backend/` to Render, Railway, Fly.io, or another ASGI host.
-- Python runtime is pinned in `.python-version`. On Render, also set `PYTHON_VERSION=3.13.9`.
+- On Render, set `PYTHON_VERSION=3.13.9`.
 - Command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT --app-dir backend`
 - Configure backend env vars from `backend/.env.example`.
 - Add every deployed frontend origin to `FRONTEND_ORIGIN` or `APP_FRONTEND_URL`; comma-separated origins are supported.
