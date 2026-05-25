@@ -103,9 +103,12 @@ export function AdminHomePage() {
   async function save() {
     setSaving(true);
     try {
-      await updateHomeContent(form);
-      await client.invalidateQueries({ queryKey: ["home"] });
+      const saved = await updateHomeContent(form);
+      setForm(saved);
+      client.setQueryData(["home"], saved);
       notify("Home content saved", "success");
+    } catch (error) {
+      notify(error instanceof Error ? error.message : "Home content could not be saved", "error");
     } finally {
       setSaving(false);
     }

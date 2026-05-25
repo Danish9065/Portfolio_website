@@ -3,6 +3,7 @@ import { deleteProject, createProject } from "../../api/admin";
 import { getProjects } from "../../api/portfolio";
 import { AdminProjectForm } from "../../components/admin/AdminProjectForm";
 import { useToast } from "../../components/ToastProvider";
+import type { Project } from "../../types/api";
 
 export function AdminProjectsPage() {
   const client = useQueryClient();
@@ -16,12 +17,28 @@ export function AdminProjectsPage() {
           {data.map((project) => (
             <div key={project.id} className="panel flex items-center justify-between rounded-lg p-4">
               <div><p className="font-semibold text-white">{project.title}</p><p className="text-sm text-muted">{project.slug}</p></div>
-              <button className="text-sm text-red-200" onClick={async () => { await deleteProject(project.id); await client.invalidateQueries({ queryKey: ["projects"] }); notify("Project deleted", "success"); }}>Delete</button>
+              <button className="text-sm text-red-200" onClick={async () => {
+                try {
+                  await deleteProject(project.id);
+                  client.setQueryData<Project[]>(["projects"], (current = []) => current.filter((item) => item.id !== project.id));
+                  notify("Project deleted", "success");
+                } catch (error) {
+                  notify(error instanceof Error ? error.message : "Project could not be deleted", "error");
+                }
+              }}>Delete</button>
             </div>
           ))}
         </div>
       </div>
-      <AdminProjectForm label="New project" onSubmit={async (values) => { await createProject(values as never); await client.invalidateQueries({ queryKey: ["projects"] }); notify("Project saved", "success"); }} />
+      <AdminProjectForm label="New project" onSubmit={async (values) => {
+        try {
+          const saved = await createProject(values as never);
+          client.setQueryData<Project[]>(["projects"], (current = []) => [...current, saved].sort((a, b) => a.sort_order - b.sort_order));
+          notify("Project saved", "success");
+        } catch (error) {
+          notify(error instanceof Error ? error.message : "Project could not be saved", "error");
+        }
+      }} />
     </section>
   );
 }
