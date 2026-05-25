@@ -15,6 +15,7 @@ export function AdminTestimonialsPage() {
         try {
           await deleteTestimonial(testimonial.id);
           client.setQueryData<Testimonial[]>(["testimonials"], (current = []) => current.filter((item) => item.id !== testimonial.id));
+          await client.invalidateQueries({ queryKey: ["testimonials"] });
           notify("Testimonial deleted", "success");
         } catch (error) {
           notify(error instanceof Error ? error.message : "Testimonial could not be deleted", "error");
@@ -24,6 +25,7 @@ export function AdminTestimonialsPage() {
         try {
           const saved = await createTestimonial(values as never);
           client.setQueryData<Testimonial[]>(["testimonials"], (current = []) => [...current, saved]);
+          await client.invalidateQueries({ queryKey: ["testimonials"] });
           notify("Testimonial saved", "success");
         } catch (error) {
           notify(error instanceof Error ? error.message : "Testimonial could not be saved", "error");

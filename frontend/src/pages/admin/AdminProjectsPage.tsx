@@ -21,6 +21,7 @@ export function AdminProjectsPage() {
                 try {
                   await deleteProject(project.id);
                   client.setQueryData<Project[]>(["projects"], (current = []) => current.filter((item) => item.id !== project.id));
+                  await client.invalidateQueries({ queryKey: ["projects"] });
                   notify("Project deleted", "success");
                 } catch (error) {
                   notify(error instanceof Error ? error.message : "Project could not be deleted", "error");
@@ -34,6 +35,7 @@ export function AdminProjectsPage() {
         try {
           const saved = await createProject(values as never);
           client.setQueryData<Project[]>(["projects"], (current = []) => [...current, saved].sort((a, b) => a.sort_order - b.sort_order));
+          await client.invalidateQueries({ queryKey: ["projects"] });
           notify("Project saved", "success");
         } catch (error) {
           notify(error instanceof Error ? error.message : "Project could not be saved", "error");

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from uuid import uuid4
 from app.core.config import Settings
+from app.core.errors import integration_unavailable
 
 
 DEMO_PROFILE = {
@@ -277,7 +277,7 @@ class SupabaseService:
     async def admin_create(self, table: str, payload: dict) -> dict:
         client = self.client()
         if not client:
-            return {"id": str(uuid4()), **payload}
+            raise integration_unavailable("Supabase")
         payload.pop("id", None)
         result = client.table(table).insert(payload).execute()
         return result.data[0]
@@ -285,15 +285,16 @@ class SupabaseService:
     async def admin_update(self, table: str, row_id: str, payload: dict) -> dict:
         client = self.client()
         if not client:
-            return {"id": row_id, **payload}
+            raise integration_unavailable("Supabase")
         payload.pop("id", None)
         result = client.table(table).update(payload).eq("id", row_id).execute()
         return result.data[0]
 
     async def admin_delete(self, table: str, row_id: str) -> None:
         client = self.client()
-        if client:
-            client.table(table).delete().eq("id", row_id).execute()
+        if not client:
+            raise integration_unavailable("Supabase")
+        client.table(table).delete().eq("id", row_id).execute()
 
     async def site_setting(self, key: str, fallback: dict) -> dict:
         client = self.client()
@@ -318,6 +319,6 @@ class SupabaseService:
     async def upsert_site_setting(self, key: str, value: dict) -> dict:
         client = self.client()
         if not client:
-            return value
-        result = client.table("site_settings").upsert({"key": key, "value": value}).execute()
+            raise integration_unavailable("Supabase")
+        result = client.table("site_settings").upsert({"key": key, "value": value}, on_conflict="key").execute()
         return result.data[0]["value"]

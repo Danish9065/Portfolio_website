@@ -15,6 +15,7 @@ export function AdminServicesPage() {
         try {
           await deleteService(service.id);
           client.setQueryData<Service[]>(["services"], (current = []) => current.filter((item) => item.id !== service.id));
+          await client.invalidateQueries({ queryKey: ["services"] });
           notify("Service deleted", "success");
         } catch (error) {
           notify(error instanceof Error ? error.message : "Service could not be deleted", "error");
@@ -24,6 +25,7 @@ export function AdminServicesPage() {
         try {
           const saved = await createService(values as never);
           client.setQueryData<Service[]>(["services"], (current = []) => [...current, saved].sort((a, b) => a.sort_order - b.sort_order));
+          await client.invalidateQueries({ queryKey: ["services"] });
           notify("Service saved", "success");
         } catch (error) {
           notify(error instanceof Error ? error.message : "Service could not be saved", "error");
