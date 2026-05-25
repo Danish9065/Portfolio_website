@@ -24,6 +24,7 @@ Backend:
 - `CONTACT_RECEIVER_EMAIL`
 - `OWNER_NOTIFICATION_EMAIL`
 - `GEMINI_API_KEY`
+- `GEMINI_MODEL`
 - `JWT_SECRET`
 
 Never put backend-only secrets into `VITE_*` variables.

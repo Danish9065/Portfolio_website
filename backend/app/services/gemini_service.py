@@ -21,11 +21,14 @@ class GeminiService:
     async def answer(self, question: str, context: dict) -> str:
         if not self.configured:
             return "The AI assistant needs a Gemini API key before it can answer dynamically. You can still use the contact page to ask about skills, projects, services, or availability."
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={self.settings.gemini_api_key}"
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{self.settings.gemini_model}:generateContent?key={self.settings.gemini_api_key}"
         prompt = f"{SYSTEM_RULES}\n\nPortfolio context JSON:\n{json.dumps(context, default=str)}\n\nQuestion: {question}"
         payload = {"contents": [{"parts": [{"text": prompt}]}], "generationConfig": {"temperature": 0.2, "maxOutputTokens": 500}}
-        async with httpx.AsyncClient(timeout=20) as client:
-            response = await client.post(url, json=payload)
-            response.raise_for_status()
-            data = response.json()
+        try:
+            async with httpx.AsyncClient(timeout=20) as client:
+                response = await client.post(url, json=payload)
+                response.raise_for_status()
+                data = response.json()
+        except httpx.HTTPError:
+            return "The portfolio data is connected, but the AI provider did not return an answer. Please use the contact form for this question."
         return data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "I could not produce an answer from the configured portfolio context.")

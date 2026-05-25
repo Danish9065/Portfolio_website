@@ -219,20 +219,26 @@ class SupabaseService:
         client = self.client()
         if not client:
             return fallback
-        query = client.table(table).select("*")
-        if table in {"skills", "projects", "services"}:
-            query = query.order("sort_order")
-        else:
-            query = query.order("created_at", desc=True)
-        result = query.execute()
-        return result.data or []
+        try:
+            query = client.table(table).select("*")
+            if table in {"skills", "projects", "services"}:
+                query = query.order("sort_order")
+            else:
+                query = query.order("created_at", desc=True)
+            result = query.execute()
+            return result.data or []
+        except Exception:
+            return fallback
 
     async def first_profile(self) -> dict:
         client = self.client()
         if not client:
             return DEMO_PROFILE
-        result = client.table("profiles").select("*").limit(1).execute()
-        return result.data[0] if result.data else DEMO_PROFILE
+        try:
+            result = client.table("profiles").select("*").limit(1).execute()
+            return result.data[0] if result.data else DEMO_PROFILE
+        except Exception:
+            return DEMO_PROFILE
 
     async def project_by_slug(self, slug: str) -> dict | None:
         projects = await self.table_all("projects", DEMO_PROJECTS)
@@ -293,8 +299,21 @@ class SupabaseService:
         client = self.client()
         if not client:
             return fallback
-        result = client.table("site_settings").select("value").eq("key", key).limit(1).execute()
-        return result.data[0]["value"] if result.data else fallback
+        try:
+            result = client.table("site_settings").select("value").eq("key", key).limit(1).execute()
+            return result.data[0]["value"] if result.data else fallback
+        except Exception:
+            return fallback
+
+    async def readiness(self) -> dict:
+        if not self.configured:
+            return {"ok": False, "error": self.settings.supabase_configuration_error or "Supabase is not configured."}
+        try:
+            result = self.client().table("profiles").select("id").limit(1).execute()
+            return {"ok": True, "sample_rows": len(result.data or [])}
+        except Exception as exc:
+            message = getattr(exc, "message", None) or str(exc)
+            return {"ok": False, "error": message}
 
     async def upsert_site_setting(self, key: str, value: dict) -> dict:
         client = self.client()
