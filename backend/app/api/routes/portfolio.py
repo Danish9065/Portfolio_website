@@ -32,18 +32,18 @@ async def projects(settings: Settings = Depends(get_settings)):
     return await service(settings).table_all("projects", DEMO_PROJECTS)
 
 
-@router.get("/projects/{project_id}")
-async def project(project_id: str, settings: Settings = Depends(get_settings)):
-    rows = await service(settings).table_all("projects", DEMO_PROJECTS)
-    item = next((row for row in rows if row["id"] == project_id), None)
+@router.get("/projects/slug/{slug}")
+async def project_by_slug(slug: str, settings: Settings = Depends(get_settings)):
+    item = await service(settings).project_by_slug(slug)
     if not item:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Project not found.")
     return item
 
 
-@router.get("/projects/slug/{slug}")
-async def project_by_slug(slug: str, settings: Settings = Depends(get_settings)):
-    item = await service(settings).project_by_slug(slug)
+@router.get("/projects/{project_id}")
+async def project(project_id: str, settings: Settings = Depends(get_settings)):
+    rows = await service(settings).table_all("projects", DEMO_PROJECTS)
+    item = next((row for row in rows if row["id"] == project_id), None)
     if not item:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Project not found.")
     return item
