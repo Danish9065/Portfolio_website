@@ -11,4 +11,9 @@ async def require_admin(request: Request, settings: Settings = Depends(get_setti
     user = await SupabaseService(settings).verify_user_token(token)
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid admin token.")
+    allowed_emails = settings.admin_email_set
+    if not allowed_emails:
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Admin email allowlist is not configured.")
+    if user.get("email", "").lower() not in allowed_emails:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin access is not allowed for this account.")
     return user

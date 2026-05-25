@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { ToastProvider } from "./components/ToastProvider";
+import { RequireAdmin } from "./components/admin/RequireAdmin";
 import { AdminLayout } from "./layouts/AdminLayout";
 import { PublicLayout } from "./layouts/PublicLayout";
 import { AboutPage } from "./pages/AboutPage";
@@ -35,13 +36,15 @@ export default function App() {
           <Route path="/contact" element={<ContactPage />} />
         </Route>
         <Route path="/admin/login" element={<AdminLoginPage />} />
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<AdminDashboardPage />} />
-          <Route path="home" element={<AdminHomePage />} />
-          <Route path="projects" element={<AdminProjectsPage />} />
-          <Route path="inquiries" element={<AdminInquiriesPage />} />
-          <Route path="services" element={<AdminServicesPage />} />
-          <Route path="testimonials" element={<AdminTestimonialsPage />} />
+        <Route element={<RequireAdmin />}>
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboardPage />} />
+            <Route path="home" element={<AdminHomePage />} />
+            <Route path="projects" element={<AdminProjectsPage />} />
+            <Route path="inquiries" element={<AdminInquiriesPage />} />
+            <Route path="services" element={<AdminServicesPage />} />
+            <Route path="testimonials" element={<AdminTestimonialsPage />} />
+          </Route>
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

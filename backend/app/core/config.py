@@ -27,6 +27,7 @@ class Settings(BaseSettings):
     supabase_service_role_key: str | None = None
     supabase_anon_key: str | None = None
     supabase_jwt_secret: str | None = None
+    admin_emails: str | None = None
     cloudinary_cloud_name: str | None = None
     cloudinary_api_key: str | None = None
     cloudinary_api_secret: str | None = None
@@ -51,6 +52,14 @@ class Settings(BaseSettings):
         if self.supabase_url and not self.supabase_service_role_key:
             return "SUPABASE_SERVICE_ROLE_KEY is required when SUPABASE_URL is set."
         return None
+
+    @property
+    def admin_email_set(self) -> set[str]:
+        return {
+            email.strip().lower()
+            for email in (self.admin_emails or "").split(",")
+            if email.strip()
+        }
 
     @property
     def cloudinary_configured(self) -> bool:
