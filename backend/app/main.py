@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.routes import admin_home, admin_inquiries, admin_projects, admin_services, admin_testimonials, chat, contact, health, portfolio, uploads
+from app.api.routes import admin_experience, admin_home, admin_inquiries, admin_profile, admin_projects, admin_services, admin_testimonials, chat, contact, health, portfolio, uploads
 from app.core.config import get_settings
 
 settings = get_settings()
@@ -21,7 +21,9 @@ for router in [
     contact.router,
     chat.router,
     uploads.router,
+    admin_experience.router,
     admin_projects.router,
+    admin_profile.router,
     admin_home.router,
     admin_services.router,
     admin_testimonials.router,

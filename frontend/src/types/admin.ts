@@ -1,9 +1,11 @@
-import type { HomeContent, Project, Service, Testimonial } from "./api";
+import type { Experience, HomeContent, Profile, Project, Service, Testimonial } from "./api";
 
 export type ProjectFormValues = Omit<Project, "id"> & { id?: string };
+export type ExperienceFormValues = Omit<Experience, "id"> & { id?: string };
 export type ServiceFormValues = Omit<Service, "id"> & { id?: string };
 export type TestimonialFormValues = Omit<Testimonial, "id"> & { id?: string };
 export type HomeFormValues = HomeContent;
+export type ProfileFormValues = Profile;
 
 export interface Inquiry {
   id: string;

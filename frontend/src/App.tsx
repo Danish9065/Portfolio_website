@@ -13,10 +13,12 @@ import { ResumePage } from "./pages/ResumePage";
 import { ServicesPage } from "./pages/ServicesPage";
 import { TestimonialsPage } from "./pages/TestimonialsPage";
 import { AdminDashboardPage } from "./pages/admin/AdminDashboardPage";
+import { AdminExperiencePage } from "./pages/admin/AdminExperiencePage";
 import { AdminHomePage } from "./pages/admin/AdminHomePage";
 import { AdminInquiriesPage } from "./pages/admin/AdminInquiriesPage";
 import { AdminLoginPage } from "./pages/admin/AdminLoginPage";
 import { AdminProjectsPage } from "./pages/admin/AdminProjectsPage";
+import { AdminResumePage } from "./pages/admin/AdminResumePage";
 import { AdminServicesPage } from "./pages/admin/AdminServicesPage";
 import { AdminTestimonialsPage } from "./pages/admin/AdminTestimonialsPage";
 
@@ -41,6 +43,8 @@ export default function App() {
             <Route index element={<AdminDashboardPage />} />
             <Route path="home" element={<AdminHomePage />} />
             <Route path="projects" element={<AdminProjectsPage />} />
+            <Route path="experience" element={<AdminExperiencePage />} />
+            <Route path="resume" element={<AdminResumePage />} />
             <Route path="inquiries" element={<AdminInquiriesPage />} />
             <Route path="services" element={<AdminServicesPage />} />
             <Route path="testimonials" element={<AdminTestimonialsPage />} />

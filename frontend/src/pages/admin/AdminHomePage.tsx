@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, Save, Trash2 } from "lucide-react";
+import { ImagePlus, Plus, Save, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { updateHomeContent } from "../../api/admin";
+import { updateHomeContent, uploadProjectImage } from "../../api/admin";
 import { getHomeContent } from "../../api/portfolio";
 import { useToast } from "../../components/ToastProvider";
 import type { HomeContent, HomeProjectItem, HomeServiceItem } from "../../types/api";
@@ -75,6 +75,7 @@ export function AdminHomePage() {
   const { data } = useQuery({ queryKey: ["home"], queryFn: getHomeContent });
   const [form, setForm] = useState<HomeContent>(emptyHomeContent);
   const [saving, setSaving] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState<string | null>(null);
 
   useEffect(() => {
     if (data) setForm(data);
@@ -112,6 +113,27 @@ export function AdminHomePage() {
       notify(error instanceof Error ? error.message : "Home content could not be saved", "error");
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function uploadHomeProjectImage(projectIndex: number, imageIndex: number, file?: File) {
+    if (!file) return;
+    const uploadKey = `${projectIndex}-${imageIndex}`;
+    setUploadingImage(uploadKey);
+    try {
+      const result = await uploadProjectImage(file);
+      if (!result.configured || !result.secure_url) {
+        notify(result.message || "Cloudinary is not configured. Add credentials before uploading images.", "error");
+        return;
+      }
+      const images = [...(form.projects.items[projectIndex]?.images ?? [])];
+      images[imageIndex] = result.secure_url;
+      updateProject(projectIndex, { images });
+      notify("Project image uploaded and URL was filled.", "success");
+    } catch (error) {
+      notify(error instanceof Error ? error.message : "Project image upload failed", "error");
+    } finally {
+      setUploadingImage(null);
     }
   }
 
@@ -200,6 +222,15 @@ export function AdminHomePage() {
               </div>
               <div className="mt-3">
                 <Field label="Three project image URLs" textarea value={arrayToLines(project.images)} onChange={(value) => updateProject(index, { images: linesToArray(value) })} />
+              </div>
+              <div className="mt-3 grid gap-2 md:grid-cols-3">
+                {[0, 1, 2].map((imageIndex) => (
+                  <label key={imageIndex} className="flex cursor-pointer items-center justify-center gap-2 rounded-md border border-dashed border-line bg-panel px-3 py-3 text-sm text-muted hover:border-accent hover:text-white">
+                    <ImagePlus className="h-4 w-4" />
+                    {uploadingImage === `${index}-${imageIndex}` ? "Uploading..." : `Upload image ${imageIndex + 1}`}
+                    <input className="hidden" type="file" accept="image/*" disabled={uploadingImage !== null} onChange={(event) => void uploadHomeProjectImage(index, imageIndex, event.target.files?.[0])} />
+                  </label>
+                ))}
               </div>
               <button className="mt-3 inline-flex items-center gap-2 text-sm text-red-200" onClick={() => setForm({ ...form, projects: { ...form.projects, items: form.projects.items.filter((_, itemIndex) => itemIndex !== index) } })}>
                 <Trash2 className="h-4 w-4" /> Remove project

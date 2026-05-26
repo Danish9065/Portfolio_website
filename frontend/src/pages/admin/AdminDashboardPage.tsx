@@ -4,6 +4,8 @@ export function AdminDashboardPage() {
   const cards = [
     ["Home", "/admin/home", "Edit hero, marquee, about, services, and featured project sections."],
     ["Projects", "/admin/projects", "Create and maintain case studies."],
+    ["Timeline", "/admin/experience", "Edit work, education, and certifications."],
+    ["Resume", "/admin/resume", "Update profile details and resume file."],
     ["Inquiries", "/admin/inquiries", "Review contact submissions."],
     ["Services", "/admin/services", "Update service offers."],
     ["Testimonials", "/admin/testimonials", "Manage proof and references."]

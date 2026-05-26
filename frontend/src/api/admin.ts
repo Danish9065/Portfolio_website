@@ -1,8 +1,8 @@
 import { apiFetch } from "./client";
 import { API_BASE_URL } from "../lib/constants";
 import { getAccessToken } from "../lib/supabaseAuth";
-import type { HomeFormValues, Inquiry, ProjectFormValues, ServiceFormValues, TestimonialFormValues } from "../types/admin";
-import type { HomeContent } from "../types/api";
+import type { ExperienceFormValues, HomeFormValues, Inquiry, ProfileFormValues, ProjectFormValues, ServiceFormValues, TestimonialFormValues } from "../types/admin";
+import type { Experience, HomeContent, Profile } from "../types/api";
 import type { Project, Service, Testimonial } from "../types/api";
 
 async function authHeaders() {
@@ -21,6 +21,14 @@ export const createProject = (payload: ProjectFormValues) =>
 export const updateProject = (id: string, payload: ProjectFormValues) =>
   adminFetch<Project>(`/api/admin/projects/${id}`, { method: "PUT", body: JSON.stringify(payload) });
 export const deleteProject = (id: string) => adminFetch<{ ok: boolean }>(`/api/admin/projects/${id}`, { method: "DELETE" });
+export const createExperience = (payload: ExperienceFormValues) =>
+  adminFetch<Experience>("/api/admin/experience", { method: "POST", body: JSON.stringify(payload) });
+export const updateExperience = (id: string, payload: ExperienceFormValues) =>
+  adminFetch<Experience>(`/api/admin/experience/${id}`, { method: "PUT", body: JSON.stringify(payload) });
+export const deleteExperience = (id: string) =>
+  adminFetch<{ ok: boolean }>(`/api/admin/experience/${id}`, { method: "DELETE" });
+export const updateProfile = (payload: ProfileFormValues) =>
+  adminFetch<Profile>("/api/admin/profile", { method: "PUT", body: JSON.stringify(payload) });
 export const createService = (payload: ServiceFormValues) =>
   adminFetch<Service>("/api/admin/services", { method: "POST", body: JSON.stringify(payload) });
 export const updateService = (id: string, payload: ServiceFormValues) =>
@@ -56,6 +64,25 @@ export async function uploadProjectImage(file: File) {
 
   if (!response.ok) {
     throw new Error("detail" in data ? data.detail : "Image upload failed");
+  }
+
+  return data as UploadResponse;
+}
+
+export async function uploadResume(file: File) {
+  const token = await getAccessToken();
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await fetch(`${API_BASE_URL}/api/uploads/resume`, {
+    method: "POST",
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    body: formData
+  });
+  const data = (await response.json()) as UploadResponse | { detail?: string };
+
+  if (!response.ok) {
+    throw new Error("detail" in data ? data.detail : "Resume upload failed");
   }
 
   return data as UploadResponse;

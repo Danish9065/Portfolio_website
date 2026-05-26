@@ -109,10 +109,14 @@ function GenericForm({
       {Object.entries(values).map(([key, value]) => (
         key === "image_url" && kind === "project" ? (
           <div key={key} className="grid gap-2">
-            <input className="rounded-md border border-line bg-ink px-3 py-2 text-sm" placeholder="image_url" value={value} onChange={(event) => setValues({ ...values, [key]: event.target.value })} />
+            <label className="grid gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-muted">
+              Project image
+              <input className="rounded-md border border-line bg-ink px-3 py-2 text-sm normal-case tracking-normal text-mist" placeholder="image_url" value={value} onChange={(event) => setValues({ ...values, [key]: event.target.value })} />
+            </label>
+            {value ? <img src={value} alt="Project preview" className="h-36 w-full rounded-md border border-line object-cover" /> : null}
             <label className="flex cursor-pointer items-center justify-center gap-2 rounded-md border border-dashed border-line bg-panel px-3 py-3 text-sm text-muted hover:border-accent hover:text-white">
               <ImagePlus className="h-4 w-4" />
-              {uploading ? "Uploading image..." : "Upload image and use as image_url"}
+              {uploading ? "Uploading image..." : "Upload project image"}
               <input className="hidden" type="file" accept="image/*" disabled={uploading} onChange={(event) => void handleImageUpload(event.target.files?.[0])} />
             </label>
           </div>

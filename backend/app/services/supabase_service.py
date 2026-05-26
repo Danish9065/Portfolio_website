@@ -290,6 +290,20 @@ class SupabaseService:
         result = client.table(table).update(payload).eq("id", row_id).execute()
         return result.data[0]
 
+    async def admin_upsert_profile(self, payload: dict) -> dict:
+        client = self.client()
+        if not client:
+            raise integration_unavailable("Supabase")
+
+        existing = client.table("profiles").select("id").limit(1).execute()
+        existing_id = existing.data[0]["id"] if existing.data else None
+        if existing_id:
+            payload.pop("id", None)
+            result = client.table("profiles").update(payload).eq("id", existing_id).execute()
+        else:
+            result = client.table("profiles").insert(payload).execute()
+        return result.data[0]
+
     async def admin_delete(self, table: str, row_id: str) -> None:
         client = self.client()
         if not client:

@@ -6,6 +6,8 @@ const links = [
   { to: "/admin", label: "Dashboard" },
   { to: "/admin/home", label: "Home" },
   { to: "/admin/projects", label: "Projects" },
+  { to: "/admin/experience", label: "Timeline" },
+  { to: "/admin/resume", label: "Resume" },
   { to: "/admin/inquiries", label: "Inquiries" },
   { to: "/admin/services", label: "Services" },
   { to: "/admin/testimonials", label: "Testimonials" }
