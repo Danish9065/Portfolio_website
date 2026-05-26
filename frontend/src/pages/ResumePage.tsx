@@ -17,7 +17,7 @@ export function ResumePage() {
           <h3 className="text-2xl font-semibold text-white">{profile.data?.full_name ?? "Your Name"}</h3>
           <p className="mt-2 text-accent">{profile.data?.title ?? "Full-stack developer"}</p>
           <p className="mt-4 text-sm leading-6 text-muted">{profile.data?.bio}</p>
-          <a href={resumeUrl} className="mt-6 inline-flex items-center gap-2 rounded-md bg-accent px-4 py-3 font-semibold text-ink"><Download className="h-4 w-4" /> Download resume</a>
+          <a href={resumeUrl} download target="_blank" rel="noreferrer" className="mt-6 inline-flex items-center gap-2 rounded-md bg-accent px-4 py-3 font-semibold text-ink"><Download className="h-4 w-4" /> Download resume</a>
         </div>
         <div className="panel rounded-lg p-6">
           <h3 className="font-semibold text-white">Core stack</h3>

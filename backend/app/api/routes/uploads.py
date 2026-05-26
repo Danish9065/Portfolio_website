@@ -13,7 +13,7 @@ async def upload_image(file: UploadFile = File(...), _: dict = Depends(require_a
 
 @router.post("/uploads/resume")
 async def upload_resume(file: UploadFile = File(...), _: dict = Depends(require_admin), settings: Settings = Depends(get_settings)):
-    return await CloudinaryService(settings).upload(file, folder="portfolio/resumes", resource_type="auto")
+    return await CloudinaryService(settings).upload(file, folder="portfolio/resumes", resource_type="raw")
 
 
 @router.post("/upload")
