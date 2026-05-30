@@ -285,11 +285,13 @@ function HeroSection({ content }: { content: HomeContent["hero"] }) {
         </FadeIn>
       </div>
 
-      <FadeIn delay={0.6} y={30} className="absolute bottom-[118px] left-1/2 z-10 w-[240px] -translate-x-1/2 sm:bottom-0 sm:w-[360px] md:w-[440px] lg:w-[520px]">
-        <Magnet padding={150} strength={3} activeTransition="transform 0.3s ease-out" inactiveTransition="transform 0.6s ease-in-out">
-          <img src={content.portrait_url} alt="Danish 3D portrait" className="w-full select-none object-contain" draggable={false} />
-        </Magnet>
-      </FadeIn>
+      <div className="absolute bottom-[118px] left-1/2 z-10 w-[240px] -translate-x-1/2 sm:bottom-0 sm:w-[360px] md:w-[440px] lg:w-[520px]">
+        <FadeIn delay={0.6} y={30}>
+          <Magnet padding={150} strength={3} activeTransition="transform 0.3s ease-out" inactiveTransition="transform 0.6s ease-in-out">
+            <img src={content.portrait_url} alt="Danish 3D portrait" className="w-full select-none object-contain" draggable={false} />
+          </Magnet>
+        </FadeIn>
+      </div>
 
       <div className="relative z-20 mt-auto flex items-end justify-between pb-7 pl-6 pr-24 sm:pb-8 sm:pr-28 md:pb-10 md:pl-10 md:pr-32">
         <FadeIn delay={0.35} y={20}>
