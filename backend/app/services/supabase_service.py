@@ -6,14 +6,14 @@ from app.core.errors import integration_unavailable
 
 DEMO_PROFILE = {
     "id": "00000000-0000-4000-8000-000000000001",
-    "full_name": "Demo Portfolio Owner",
+    "full_name": "Danish MD",
     "title": "Full-stack Developer",
-    "bio": "Editable sample profile for a developer portfolio. Replace this with real biography, role focus, and proof before publishing.",
-    "location": "Remote / Your City",
-    "email": "hello@example.com",
+    "bio": "Full-stack developer focused on building practical, reliable, and polished digital products.",
+    "location": "India",
+    "email": "",
     "phone": None,
-    "linkedin_url": "https://linkedin.com/",
-    "github_url": "https://github.com/",
+    "linkedin_url": None,
+    "github_url": None,
     "website_url": None,
     "resume_url": None,
 }
@@ -30,10 +30,10 @@ DEMO_SKILLS = [
 DEMO_PROJECTS = [
     {
         "id": "project-portfolio",
-        "title": "Sample Recruiter Dashboard",
-        "slug": "sample-recruiter-dashboard",
-        "short_description": "Editable demo case study showing how to present role fit, project evidence, and contact paths.",
-        "description": "Demo project content. Replace this with a real case study covering problem, role, stack, process, and measurable result if available.",
+        "title": "Portfolio Website",
+        "slug": "portfolio-website",
+        "short_description": "A responsive portfolio experience with project pages, contact flows, and admin-managed content.",
+        "description": "A full-stack portfolio built to present skills, services, project work, and contact paths in a clear production experience.",
         "category": "Full-stack",
         "tech_stack": ["React", "TypeScript", "FastAPI", "Supabase"],
         "image_url": None,
@@ -45,10 +45,10 @@ DEMO_PROJECTS = [
     },
     {
         "id": "project-client-portal",
-        "title": "Sample Client Portal",
-        "slug": "sample-client-portal",
-        "short_description": "Editable demo project for client-facing delivery, collaboration, and request workflows.",
-        "description": "Demo project content. Do not present this as a real client project until replaced with actual work.",
+        "title": "Client Portal Concept",
+        "slug": "client-portal-concept",
+        "short_description": "A structured portal concept for requests, collaboration, assets, and delivery tracking.",
+        "description": "A product concept showing how client requests, assets, project status, and delivery workflows can be organized in one place.",
         "category": "SaaS",
         "tech_stack": ["React", "Python", "PostgreSQL", "Cloudinary"],
         "image_url": None,
@@ -60,10 +60,10 @@ DEMO_PROJECTS = [
     },
     {
         "id": "project-ai-assistant",
-        "title": "Sample AI Assistant",
-        "slug": "sample-ai-assistant",
-        "short_description": "Editable demo showing grounded AI answers and clear fallback behavior.",
-        "description": "Demo project content for an AI assistant. Real behavior depends on Gemini credentials and structured portfolio context.",
+        "title": "Portfolio AI Assistant",
+        "slug": "portfolio-ai-assistant",
+        "short_description": "A portfolio chat assistant designed to answer questions from structured project and profile context.",
+        "description": "An AI-assisted portfolio feature that responds from available profile, project, service, and experience content.",
         "category": "AI",
         "tech_stack": ["Gemini", "FastAPI", "React", "Supabase"],
         "image_url": None,
@@ -75,31 +75,15 @@ DEMO_PROJECTS = [
     },
 ]
 
-DEMO_EXPERIENCE = [
-    {
-        "id": "experience-demo",
-        "role": "Sample Full-stack Role",
-        "company": "Editable Demo Company",
-        "type": "Demo content",
-        "location": "Remote",
-        "start_date": "2024-01-01",
-        "end_date": None,
-        "current": True,
-        "description": "Replace this with real experience, internship, freelance, education, or certification details.",
-        "highlights": ["Built user-facing features", "Integrated backend services", "Improved reliability and documentation"],
-    }
-]
+DEMO_EXPERIENCE = []
 
 DEMO_SERVICES = [
     {"id": "service-mvp", "title": "MVP build", "slug": "mvp-build", "description": "Plan, design, and build a focused web app from idea to deployable first version.", "features": ["Product scoping", "Full-stack implementation", "Deployment guidance"], "starting_price": "Quote after scope", "icon": None, "sort_order": 1},
     {"id": "service-frontend", "title": "Frontend polish", "slug": "frontend-polish", "description": "Improve UX, performance, accessibility, and visual quality for existing apps.", "features": ["Responsive UI", "Design system cleanup", "Build verification"], "starting_price": "Quote after audit", "icon": None, "sort_order": 2},
-    {"id": "service-integration", "title": "API integrations", "slug": "api-integrations", "description": "Wire real services without exposing secrets or faking success states.", "features": ["Backend-owned secrets", "Error handling", "Documentation"], "starting_price": "Quote after integration review", "icon": None, "sort_order": 3},
+    {"id": "service-integration", "title": "API integrations", "slug": "api-integrations", "description": "Wire real services with backend-owned secrets and clear error handling.", "features": ["Backend-owned secrets", "Error handling", "Documentation"], "starting_price": "Quote after integration review", "icon": None, "sort_order": 3},
 ]
 
-DEMO_TESTIMONIALS = [
-    {"id": "testimonial-demo-1", "name": "Demo testimonial", "role": "Replace before publishing", "company": None, "quote": "This is clearly marked sample testimonial content. Replace it with a real permissioned quote.", "avatar_url": None, "rating": None},
-    {"id": "testimonial-demo-2", "name": "Demo reviewer", "role": "Editable sample", "company": None, "quote": "Use this area only for real client, employer, or collaborator feedback once available.", "avatar_url": None, "rating": None},
-]
+DEMO_TESTIMONIALS = []
 
 DEMO_HOME_CONTENT = {
     "hero": {
@@ -110,7 +94,7 @@ DEMO_HOME_CONTENT = {
             {"label": "Contact", "to": "/contact"},
         ],
         "heading": "Hi, i'm danish",
-        "tagline": "a 3d creator driven by crafting striking and unforgettable projects",
+        "tagline": "a full-stack developer focused on practical, reliable digital products",
         "portrait_url": "/images/danish-portrait.png",
         "contact_label": "Contact Me",
     },
@@ -141,7 +125,7 @@ DEMO_HOME_CONTENT = {
     },
     "about": {
         "heading": "About me",
-        "body": "With more than five years of experience in design, i focus on branding, web design, and user experience, i truly enjoy working with businesses that aim to stand out and present their best image. Let's build something incredible together!",
+        "body": "I build practical web experiences with a focus on clean interfaces, reliable backend flows, and clear communication from idea to launch.",
         "decor": {
             "moon": "https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/moon_icon.11395d36.png",
             "object": "https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/p59_1.4659672e.png",
@@ -152,11 +136,11 @@ DEMO_HOME_CONTENT = {
     "services": {
         "heading": "Services",
         "items": [
-            {"number": "01", "name": "3D Modeling", "description": "Creation of detailed objects, characters, or environments tailored to specific client needs, ideal for games, products, and visualizations."},
-            {"number": "02", "name": "Rendering", "description": "High-quality, photorealistic renders that showcase designs with custom lighting, textures, and materials to bring concepts to life."},
-            {"number": "03", "name": "Motion Design", "description": "Dynamic animations and motion graphics that add energy and storytelling to brands, products, and digital experiences."},
-            {"number": "04", "name": "Branding", "description": "Crafting cohesive visual identities -- from logos to full brand systems -- that communicate a clear and memorable presence."},
-            {"number": "05", "name": "Web Design", "description": "Designing clean, modern, and conversion-focused websites with attention to layout, typography, and user experience."},
+            {"number": "01", "name": "Full-stack development", "description": "Build responsive web apps with polished frontends, backend APIs, and practical deployment paths."},
+            {"number": "02", "name": "Frontend polish", "description": "Improve layout, interaction, accessibility, and performance so products feel clear and reliable."},
+            {"number": "03", "name": "API integrations", "description": "Connect real services with backend-owned secrets, validation, and clear error handling."},
+            {"number": "04", "name": "Admin dashboards", "description": "Create maintainable content and workflow tools for managing portfolio or product data."},
+            {"number": "05", "name": "Product iteration", "description": "Turn rough ideas into focused, testable features with thoughtful user experience decisions."},
         ],
     },
     "projects": {
@@ -164,8 +148,8 @@ DEMO_HOME_CONTENT = {
         "items": [
             {
                 "number": "01",
-                "name": "Nextlevel Studio",
-                "category": "Client",
+                "name": "Portfolio Website",
+                "category": "Full-stack",
                 "images": [
                     "https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055344_5eff02e0-87a5-41ce-b64f-eb08da8f33db.png&w=1280&q=85",
                     "https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055431_11d841fd-8b41-46a5-82e4-b04f2407a7d8.png&w=1280&q=85",
@@ -174,8 +158,8 @@ DEMO_HOME_CONTENT = {
             },
             {
                 "number": "02",
-                "name": "Aura Brand Identity",
-                "category": "Personal",
+                "name": "Client Portal Concept",
+                "category": "SaaS",
                 "images": [
                     "https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055654_911201c5-36d9-4bc6-bac7-331adfce159f.png&w=1280&q=85",
                     "https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055723_5ceda0b8-d9c2-4665-b2e3-83ba19ba76d1.png&w=1280&q=85",
@@ -184,8 +168,8 @@ DEMO_HOME_CONTENT = {
             },
             {
                 "number": "03",
-                "name": "Solaris Digital",
-                "category": "Client",
+                "name": "Portfolio AI Assistant",
+                "category": "AI",
                 "images": [
                     "https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055759_963cfb0b-4bd1-4b0f-9d0a-09bd6cf95b2f.png&w=1280&q=85",
                     "https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_060108_438f781a-9846-4dcc-89ab-c4e6cb830f5b.png&w=1280&q=85",
@@ -219,26 +203,22 @@ class SupabaseService:
         client = self.client()
         if not client:
             return fallback
-        try:
-            query = client.table(table).select("*")
-            if table in {"skills", "projects", "services"}:
-                query = query.order("sort_order")
-            else:
-                query = query.order("created_at", desc=True)
-            result = query.execute()
-            return result.data or []
-        except Exception:
-            return fallback
+        query = client.table(table).select("*")
+        if table in {"skills", "projects", "services"}:
+            query = query.order("sort_order")
+        else:
+            query = query.order("created_at", desc=True)
+        result = query.execute()
+        return result.data or []
 
     async def first_profile(self) -> dict:
         client = self.client()
         if not client:
             return DEMO_PROFILE
-        try:
-            result = client.table("profiles").select("*").limit(1).execute()
-            return result.data[0] if result.data else DEMO_PROFILE
-        except Exception:
-            return DEMO_PROFILE
+        result = client.table("profiles").select("*").limit(1).execute()
+        if not result.data:
+            raise RuntimeError("Profile content is not configured.")
+        return result.data[0]
 
     async def project_by_slug(self, slug: str) -> dict | None:
         projects = await self.table_all("projects", DEMO_PROJECTS)
@@ -314,18 +294,17 @@ class SupabaseService:
         client = self.client()
         if not client:
             return fallback
-        try:
-            result = client.table("site_settings").select("value").eq("key", key).limit(1).execute()
-            return result.data[0]["value"] if result.data else fallback
-        except Exception:
-            return fallback
+        result = client.table("site_settings").select("value").eq("key", key).limit(1).execute()
+        if not result.data:
+            raise RuntimeError(f"{key} content is not configured.")
+        return result.data[0]["value"]
 
     async def readiness(self) -> dict:
         if not self.configured:
             return {"ok": False, "error": self.settings.supabase_configuration_error or "Supabase is not configured."}
         try:
             result = self.client().table("profiles").select("id").limit(1).execute()
-            return {"ok": True, "sample_rows": len(result.data or [])}
+            return {"ok": True, "rows": len(result.data or [])}
         except Exception as exc:
             message = getattr(exc, "message", None) or str(exc)
             return {"ok": False, "error": message}

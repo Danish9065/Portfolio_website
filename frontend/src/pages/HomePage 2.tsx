@@ -60,11 +60,11 @@ export function HomePage() {
           </div>
           {profile.isLoading ? <LoadingSpinner /> : null}
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-accent">Available for selective opportunities</p>
-          <h1 className="mt-4 font-display text-balance text-5xl font-semibold tracking-normal text-white md:text-7xl">{profile.data?.full_name ?? "Your Name"} builds useful, polished software.</h1>
+          <h1 className="mt-4 font-display text-balance text-5xl font-semibold tracking-normal text-white md:text-7xl">{profile.data?.full_name ?? "Danish MD"} builds useful, polished software.</h1>
           <p className="mt-5 max-w-2xl text-lg leading-8 text-muted">
             {details.intro}
           </p>
-          <p className="mt-4 text-sm text-muted">{profile.data?.title ?? "Full-stack developer"} · {profile.data?.location ?? "Location not configured"}</p>
+          <p className="mt-4 text-sm text-muted">{profile.data?.title ?? "Full-stack developer"} · {profile.data?.location ?? "India"}</p>
           <div className="mt-6 flex flex-wrap gap-2">
             {details.focus.map((item) => <span key={item} className="rounded-md border border-accent/25 bg-accent/10 px-3 py-2 text-sm text-mist">{item}</span>)}
           </div>

@@ -46,7 +46,7 @@ export function ChatWidget() {
       <header className="flex items-center justify-between border-b border-line p-4">
         <div>
           <p className="font-semibold text-white">Portfolio assistant</p>
-          <p className="text-xs text-muted">Grounded in configured portfolio data</p>
+          <p className="text-xs text-muted">Ask about projects, services, and skills</p>
         </div>
         <button aria-label="Close chat" onClick={() => setOpen(false)}><X className="h-5 w-5" /></button>
       </header>

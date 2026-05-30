@@ -26,8 +26,11 @@ function errorMessage(data: unknown): string {
 export async function apiFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...init,
+    cache: "no-store",
     headers: {
       "Content-Type": "application/json",
+      "Cache-Control": "no-cache",
+      Pragma: "no-cache",
       ...init.headers
     }
   });

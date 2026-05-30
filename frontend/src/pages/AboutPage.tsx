@@ -11,9 +11,9 @@ export function AboutPage() {
   const experience = useQuery({ queryKey: ["experience"], queryFn: getExperience });
   return (
     <RevealSection className="container-shell py-14">
-      <SectionHeader eyebrow="About" title="Built for technical credibility and clear communication" body={profile.data?.bio ?? "Profile content loads from Supabase when configured; demo content is served otherwise."} />
+      <SectionHeader eyebrow="About" title="Built for technical credibility and clear communication" body={profile.data?.bio ?? "Full-stack developer focused on practical, reliable digital products."} />
       <div className="mb-12 flex flex-wrap gap-2">{skills.data?.map((skill) => <SkillBadge key={skill.id} skill={skill} />)}</div>
-      <SectionHeader title="Timeline" body="Replace the sample timeline with real work, education, and certifications before publishing." />
+      <SectionHeader title="Timeline" body="Work history, education, certifications, and role-focused milestones." />
       <ExperienceTimeline items={experience.data ?? []} />
     </RevealSection>
   );

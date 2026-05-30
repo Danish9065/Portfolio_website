@@ -13,7 +13,7 @@ export function AdminDashboardPage() {
   return (
     <section>
       <h1 className="text-3xl font-semibold text-white">Admin dashboard</h1>
-      <p className="mt-2 text-sm text-muted">Protected actions require a valid Supabase Auth session and backend JWT verification.</p>
+      <p className="mt-2 text-sm text-muted">Manage portfolio content, inquiries, services, and proof.</p>
       <div className="mt-8 grid gap-4 md:grid-cols-2">
         {cards.map(([title, to, body]) => <Link key={to} to={to} className="panel rounded-lg p-5"><h2 className="font-semibold text-white">{title}</h2><p className="mt-2 text-sm text-muted">{body}</p></Link>)}
       </div>
