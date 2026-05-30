@@ -4,22 +4,14 @@ import { getProfile, getSkills } from "../api/portfolio";
 import { RevealSection } from "../components/RevealSection";
 import { SectionHeader } from "../components/SectionHeader";
 import { SkillBadge } from "../components/SkillBadge";
+import { API_BASE_URL } from "../lib/constants";
 
 const RESUME_FILENAME = "Danish-MD-Resume.pdf";
-
-function getDownloadUrl(url: string) {
-  if (!url.includes("res.cloudinary.com") || !url.includes("/upload/") || url.includes("/fl_attachment")) {
-    return url;
-  }
-
-  return url.replace("/upload/", `/upload/fl_attachment:${RESUME_FILENAME}/`);
-}
 
 export function ResumePage() {
   const profile = useQuery({ queryKey: ["profile"], queryFn: getProfile });
   const skills = useQuery({ queryKey: ["skills"], queryFn: getSkills });
-  const resumeUrl = profile.data?.resume_url || "/resume-placeholder.txt";
-  const downloadUrl = getDownloadUrl(resumeUrl);
+  const downloadUrl = profile.data?.resume_url ? `${API_BASE_URL}/api/resume/download` : "/resume-placeholder.txt";
   return (
     <RevealSection className="container-shell py-14">
       <SectionHeader eyebrow="Resume" title="Recruiter snapshot" body="Configure a real resume URL through Supabase or Cloudinary before sending this page publicly." />

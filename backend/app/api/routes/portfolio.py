@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+import httpx
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 from app.core.config import Settings, get_settings
 from app.services.supabase_service import (
     DEMO_EXPERIENCE,
@@ -12,6 +13,8 @@ from app.services.supabase_service import (
 
 router = APIRouter()
 
+RESUME_FILENAME = "Danish-MD-Resume.pdf"
+
 
 def service(settings: Settings) -> SupabaseService:
     return SupabaseService(settings)
@@ -20,6 +23,27 @@ def service(settings: Settings) -> SupabaseService:
 @router.get("/profile")
 async def profile(settings: Settings = Depends(get_settings)):
     return await service(settings).first_profile()
+
+
+@router.get("/resume/download")
+async def download_resume(settings: Settings = Depends(get_settings)):
+    profile_data = await service(settings).first_profile()
+    resume_url = profile_data.get("resume_url")
+    if not resume_url:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Resume is not configured.")
+
+    try:
+        async with httpx.AsyncClient(timeout=20, follow_redirects=True) as client:
+            response = await client.get(resume_url)
+            response.raise_for_status()
+    except httpx.HTTPError:
+        raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail="Resume file could not be downloaded.")
+
+    return Response(
+        content=response.content,
+        media_type=response.headers.get("content-type", "application/pdf"),
+        headers={"Content-Disposition": f'attachment; filename="{RESUME_FILENAME}"'},
+    )
 
 
 @router.get("/home")
