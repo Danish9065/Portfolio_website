@@ -27,13 +27,14 @@ class CloudinaryService:
     def configured(self) -> bool:
         return self.settings.cloudinary_configured
 
-    async def upload(self, file: UploadFile, folder: str, resource_type: str = "auto") -> dict:
+    async def upload(self, file: UploadFile, folder: str, resource_type: str = "auto", **extra_options) -> dict:
         if not self.configured:
             return {"configured": False, "message": "Cloudinary credentials are missing."}
         upload_file = self._prepare_file(file) if resource_type == "image" else file.file
         upload_options = {"folder": folder, "resource_type": resource_type}
         if resource_type == "image":
             upload_options["format"] = "webp"
+        upload_options.update(extra_options)
         result = cloudinary.uploader.upload(upload_file, **upload_options)
         return {"configured": True, "secure_url": result.get("secure_url"), "public_id": result.get("public_id")}
 

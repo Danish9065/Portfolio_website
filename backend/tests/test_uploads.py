@@ -13,11 +13,12 @@ class FakeCloudinaryService:
     def __init__(self, settings: Settings):
         self.settings = settings
 
-    async def upload(self, file: UploadFile, folder: str, resource_type: str = "auto") -> dict:
+    async def upload(self, file: UploadFile, folder: str, resource_type: str = "auto", **extra_options) -> dict:
         return {
             "configured": True,
             "folder": folder,
             "resource_type": resource_type,
+            "extra_options": extra_options,
             "secure_url": "https://res.cloudinary.com/demo/raw/upload/v1/portfolio/resumes/resume.pdf",
         }
 
@@ -31,6 +32,22 @@ async def test_resume_upload_uses_raw_resource_type(monkeypatch):
 
     assert result["folder"] == "portfolio/resumes"
     assert result["resource_type"] == "raw"
+    assert result["extra_options"] == {
+        "public_id": "danish-resume.pdf",
+        "overwrite": True,
+        "unique_filename": False,
+    }
+
+
+@pytest.mark.asyncio
+async def test_resume_upload_rejects_non_pdf(monkeypatch):
+    monkeypatch.setattr("app.api.routes.uploads.CloudinaryService", FakeCloudinaryService)
+    file = UploadFile(filename="resume.docx", file=BytesIO(b"not a pdf"))
+
+    with pytest.raises(Exception) as error:
+        await upload_resume(file=file, _={"email": "admin@example.com"}, settings=Settings())
+
+    assert getattr(error.value, "status_code") == 400
 
 
 @pytest.mark.asyncio

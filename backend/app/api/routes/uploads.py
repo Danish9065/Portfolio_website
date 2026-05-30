@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, File, UploadFile
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from app.core.config import Settings, get_settings
 from app.core.security import require_admin
 from app.services.cloudinary_service import CloudinaryService
@@ -13,7 +13,17 @@ async def upload_image(file: UploadFile = File(...), _: dict = Depends(require_a
 
 @router.post("/uploads/resume")
 async def upload_resume(file: UploadFile = File(...), _: dict = Depends(require_admin), settings: Settings = Depends(get_settings)):
-    return await CloudinaryService(settings).upload(file, folder="portfolio/resumes", resource_type="raw")
+    if file.content_type != "application/pdf" and not (file.filename or "").lower().endswith(".pdf"):
+        raise HTTPException(status_code=400, detail="Resume must be a PDF file.")
+
+    return await CloudinaryService(settings).upload(
+        file,
+        folder="portfolio/resumes",
+        resource_type="raw",
+        public_id="danish-resume.pdf",
+        overwrite=True,
+        unique_filename=False,
+    )
 
 
 @router.post("/upload")
