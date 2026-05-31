@@ -74,6 +74,21 @@ export interface Testimonial {
   rating?: number | null;
 }
 
+export interface SiteContentMedia {
+  id?: string | null;
+  section_key: string;
+  media_url?: string | null;
+  optimized_url?: string | null;
+  media_public_id?: string | null;
+  media_type?: string | null;
+  media_format?: string | null;
+  media_width?: number | null;
+  media_height?: number | null;
+  media_bytes?: number | null;
+  media_version?: number | null;
+  updated_at?: string | null;
+}
+
 export interface HomeNavItem {
   label: string;
   to: string;

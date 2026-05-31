@@ -46,7 +46,14 @@ export const updateHomeContent = (payload: HomeFormValues) =>
 export interface UploadResponse {
   configured: boolean;
   secure_url?: string;
+  optimized_url?: string;
   public_id?: string;
+  asset_type?: string;
+  format?: string;
+  width?: number;
+  height?: number;
+  bytes?: number;
+  version?: number;
   message?: string;
 }
 

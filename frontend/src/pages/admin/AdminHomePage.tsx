@@ -3,6 +3,7 @@ import { ImagePlus, Plus, Save, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { updateHomeContent, uploadProjectImage } from "../../api/admin";
 import { getHomeContent } from "../../api/portfolio";
+import { MediaUpload } from "../../components/admin/MediaUpload";
 import { useToast } from "../../components/ToastProvider";
 import type { HomeContent, HomeProjectItem, HomeServiceItem } from "../../types/api";
 
@@ -150,6 +151,7 @@ export function AdminHomePage() {
       </div>
 
       <AdminCard title="Hero">
+        <MediaUpload sectionKey="hero_media" label="Hero media" description="Upload or replace the main hero image/GIF. The public homepage reads this media dynamically." />
         <Field label="Heading" value={form.hero.heading} onChange={(heading) => setForm({ ...form, hero: { ...form.hero, heading } })} />
         <Field label="Tagline" textarea value={form.hero.tagline} onChange={(tagline) => setForm({ ...form, hero: { ...form.hero, tagline } })} />
         <Field label="Portrait image URL" value={form.hero.portrait_url} onChange={(portrait_url) => setForm({ ...form, hero: { ...form.hero, portrait_url } })} />
@@ -174,10 +176,12 @@ export function AdminHomePage() {
       </AdminCard>
 
       <AdminCard title="Marquee">
+        <MediaUpload sectionKey="home_banner" label="Home banner media" description="Optional reusable banner media for future homepage sections." />
         <Field label="GIF/image URLs" textarea value={arrayToLines(form.marquee.images)} onChange={(value) => setForm({ ...form, marquee: { images: linesToArray(value) } })} />
       </AdminCard>
 
       <AdminCard title="About">
+        <MediaUpload sectionKey="about_image" label="About image" description="Optional about-section image that can be reused by frontend sections." />
         <Field label="Heading" value={form.about.heading} onChange={(heading) => setForm({ ...form, about: { ...form.about, heading } })} />
         <Field label="Paragraph" textarea value={form.about.body} onChange={(body) => setForm({ ...form, about: { ...form.about, body } })} />
         <div className="grid gap-4 md:grid-cols-2">

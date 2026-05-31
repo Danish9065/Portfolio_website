@@ -10,7 +10,7 @@ values (
         { "label": "Contact", "to": "/contact" }
       ],
       "heading": "Hi, i''m danish",
-      "tagline": "a 3d creator driven by crafting striking and unforgettable projects",
+      "tagline": "a full-stack developer focused on practical, reliable digital products",
       "portrait_url": "/images/danish-portrait.png",
       "contact_label": "Contact Me"
     },
@@ -41,7 +41,7 @@ values (
     },
     "about": {
       "heading": "About me",
-      "body": "With more than five years of experience in design, i focus on branding, web design, and user experience, i truly enjoy working with businesses that aim to stand out and present their best image. Let''s build something incredible together!",
+      "body": "I build practical web experiences with a focus on clean interfaces, reliable backend flows, and clear communication from idea to launch.",
       "decor": {
         "moon": "https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/moon_icon.11395d36.png",
         "object": "https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/p59_1.4659672e.png",
@@ -52,11 +52,11 @@ values (
     "services": {
       "heading": "Services",
       "items": [
-        { "number": "01", "name": "3D Modeling", "description": "Creation of detailed objects, characters, or environments tailored to specific client needs, ideal for games, products, and visualizations." },
-        { "number": "02", "name": "Rendering", "description": "High-quality, photorealistic renders that showcase designs with custom lighting, textures, and materials to bring concepts to life." },
-        { "number": "03", "name": "Motion Design", "description": "Dynamic animations and motion graphics that add energy and storytelling to brands, products, and digital experiences." },
-        { "number": "04", "name": "Branding", "description": "Crafting cohesive visual identities -- from logos to full brand systems -- that communicate a clear and memorable presence." },
-        { "number": "05", "name": "Web Design", "description": "Designing clean, modern, and conversion-focused websites with attention to layout, typography, and user experience." }
+        { "number": "01", "name": "Full-stack development", "description": "Build responsive web apps with polished frontends, backend APIs, and practical deployment paths." },
+        { "number": "02", "name": "Frontend polish", "description": "Improve layout, interaction, accessibility, and performance so products feel clear and reliable." },
+        { "number": "03", "name": "API integrations", "description": "Connect real services with backend-owned secrets, validation, and clear error handling." },
+        { "number": "04", "name": "Admin dashboards", "description": "Create maintainable content and workflow tools for managing portfolio or product data." },
+        { "number": "05", "name": "Product iteration", "description": "Turn rough ideas into focused, testable features with thoughtful user experience decisions." }
       ]
     },
     "projects": {
@@ -64,8 +64,8 @@ values (
       "items": [
         {
           "number": "01",
-          "name": "Nextlevel Studio",
-          "category": "Client",
+          "name": "Portfolio Website",
+          "category": "Full-stack",
           "images": [
             "https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055344_5eff02e0-87a5-41ce-b64f-eb08da8f33db.png&w=1280&q=85",
             "https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055431_11d841fd-8b41-46a5-82e4-b04f2407a7d8.png&w=1280&q=85",
@@ -74,8 +74,8 @@ values (
         },
         {
           "number": "02",
-          "name": "Aura Brand Identity",
-          "category": "Personal",
+          "name": "Client Portal Concept",
+          "category": "SaaS",
           "images": [
             "https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055654_911201c5-36d9-4bc6-bac7-331adfce159f.png&w=1280&q=85",
             "https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055723_5ceda0b8-d9c2-4665-b2e3-83ba19ba76d1.png&w=1280&q=85",
@@ -84,8 +84,8 @@ values (
         },
         {
           "number": "03",
-          "name": "Solaris Digital",
-          "category": "Client",
+          "name": "Portfolio AI Assistant",
+          "category": "AI",
           "images": [
             "https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055759_963cfb0b-4bd1-4b0f-9d0a-09bd6cf95b2f.png&w=1280&q=85",
             "https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_060108_438f781a-9846-4dcc-89ab-c4e6cb830f5b.png&w=1280&q=85",
