@@ -6,6 +6,7 @@
     "build:frontend": "npm --prefix frontend run build",
     "lint:frontend": "npm --prefix frontend run lint",
     "dev:backend": "uvicorn app.main:app --reload --app-dir backend",
+    "supabase:keepalive": "node scripts/keep-supabase-active.mjs",
     "test:backend": "pytest backend/tests"
   }
 }
