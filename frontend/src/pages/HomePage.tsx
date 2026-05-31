@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { getHomeContent } from "../api/portfolio";
 import { LoadingSpinner } from "../components/LoadingSpinner";
 import { HeroMedia } from "../components/sections/HeroMedia";
+import { portfolioSnapshot } from "../data/portfolioSnapshot";
 import type { HomeContent, HomeProjectItem } from "../types/api";
 
 function ContactButton({ label = "Contact Me" }: { label?: string }) {
@@ -329,7 +330,13 @@ function ProjectsSection({ content }: { content: HomeContent["projects"] }) {
 }
 
 export function HomePage() {
-  const { data: content, isError, isLoading } = useQuery({ queryKey: ["home"], queryFn: getHomeContent });
+  const { data: content, isLoading } = useQuery({
+    queryKey: ["home"],
+    queryFn: getHomeContent,
+    initialData: portfolioSnapshot.home,
+    initialDataUpdatedAt: 0,
+    refetchOnMount: true
+  });
 
   if (isLoading) {
     return (
@@ -339,7 +346,7 @@ export function HomePage() {
     );
   }
 
-  if (isError || !content) {
+  if (!content) {
     return (
       <div className="flex min-h-[calc(100vh-64px)] items-center justify-center bg-[#0C0C0C] px-6 text-center text-[#D7E2EA]">
         Portfolio content is unavailable right now. Please refresh in a moment.
@@ -350,10 +357,10 @@ export function HomePage() {
   return (
     <div className="overflow-x-clip bg-[#0C0C0C]">
       <HeroSection content={content.hero} />
-      <MarqueeSection images={content.marquee.images} />
+      {content.marquee.images.length ? <MarqueeSection images={content.marquee.images} /> : null}
       <AboutSection content={content.about} contactLabel={content.hero.contact_label} />
       <ServicesSection content={content.services} />
-      <ProjectsSection content={content.projects} />
+      {content.projects.items.length ? <ProjectsSection content={content.projects} /> : null}
     </div>
   );
 }
