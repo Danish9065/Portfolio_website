@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from datetime import datetime, timezone
+
 from app.core.config import Settings
 from app.core.errors import integration_unavailable
 
@@ -315,3 +317,27 @@ class SupabaseService:
             raise integration_unavailable("Supabase")
         result = client.table("site_settings").upsert({"key": key, "value": value}, on_conflict="key").execute()
         return result.data[0]["value"]
+
+    async def site_content_all(self) -> list[dict]:
+        client = self.client()
+        if not client:
+            return []
+        result = client.table("site_content").select("*").order("updated_at", desc=True).execute()
+        return result.data or []
+
+    async def site_content_by_key(self, section_key: str) -> dict | None:
+        client = self.client()
+        if not client:
+            return None
+        result = client.table("site_content").select("*").eq("section_key", section_key).limit(1).execute()
+        return result.data[0] if result.data else None
+
+    async def upsert_site_content_media(self, section_key: str, payload: dict) -> dict:
+        client = self.client()
+        if not client:
+            raise integration_unavailable("Supabase")
+        payload = {key: value for key, value in payload.items() if key != "id"}
+        payload["section_key"] = section_key
+        payload["updated_at"] = datetime.now(timezone.utc).isoformat()
+        result = client.table("site_content").upsert(payload, on_conflict="section_key").execute()
+        return result.data[0]

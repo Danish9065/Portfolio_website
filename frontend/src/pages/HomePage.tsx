@@ -6,6 +6,7 @@ import { type ElementType, type MouseEvent, type ReactNode, useEffect, useRef, u
 import { Link } from "react-router-dom";
 import { getHomeContent } from "../api/portfolio";
 import { LoadingSpinner } from "../components/LoadingSpinner";
+import { HeroMedia } from "../components/sections/HeroMedia";
 import type { HomeContent, HomeProjectItem } from "../types/api";
 
 function ContactButton({ label = "Contact Me" }: { label?: string }) {
@@ -163,7 +164,7 @@ function HeroSection({ content }: { content: HomeContent["hero"] }) {
       <div className="absolute bottom-[118px] left-1/2 z-10 w-[240px] -translate-x-1/2 sm:bottom-0 sm:w-[360px] md:w-[440px] lg:w-[520px]">
         <FadeIn delay={0.6} y={30}>
           <Magnet padding={150} strength={3} activeTransition="transform 0.3s ease-out" inactiveTransition="transform 0.6s ease-in-out">
-            <img src={content.portrait_url} alt="Danish 3D portrait" className="w-full select-none object-contain" draggable={false} />
+            <HeroMedia fallbackSrc={content.portrait_url} alt="Danish 3D portrait" className="w-full select-none object-contain" />
           </Magnet>
         </FadeIn>
       </div>
