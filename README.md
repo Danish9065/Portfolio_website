@@ -59,6 +59,17 @@ Run `supabase/migrations/001_initial_schema.sql`, then `supabase/seed.sql`.
 
 Create an admin user in Supabase Auth. The frontend signs in with Supabase Auth, then sends the access token to FastAPI for protected admin operations.
 
+Supabase free projects can pause after one week of inactivity. This repo includes a keep-alive script that performs a small public read against the `profiles` table:
+
+```bash
+npm run supabase:keepalive
+```
+
+The script reads `SUPABASE_URL` plus `SUPABASE_ANON_KEY` from the environment, or from `backend/.env` / `frontend/.env` during local runs. The GitHub Actions workflow in `.github/workflows/supabase-keepalive.yml` runs it every three days; add these repository secrets before enabling it:
+
+- `SUPABASE_URL`
+- `SUPABASE_ANON_KEY`
+
 ## Verification
 
 ```bash
