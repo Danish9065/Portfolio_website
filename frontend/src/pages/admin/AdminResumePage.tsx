@@ -6,6 +6,8 @@ import { getProfile } from "../../api/portfolio";
 import { useToast } from "../../components/ToastProvider";
 import type { Profile } from "../../types/api";
 
+const LOCAL_RESUME_PATH = "/Danish-MD-Resume.pdf";
+
 const emptyProfile: Profile = {
   id: "00000000-0000-4000-8000-000000000001",
   full_name: "",
@@ -17,7 +19,7 @@ const emptyProfile: Profile = {
   linkedin_url: "",
   github_url: "",
   website_url: "",
-  resume_url: ""
+  resume_url: LOCAL_RESUME_PATH
 };
 
 export function AdminResumePage() {
@@ -29,7 +31,7 @@ export function AdminResumePage() {
   const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
-    if (data) setForm(data);
+    if (data) setForm({ ...data, resume_url: data.resume_url || LOCAL_RESUME_PATH });
   }, [data]);
 
   async function handleResumeUpload(file?: File) {
@@ -93,10 +95,11 @@ export function AdminResumePage() {
           <input className="rounded-md border border-line bg-ink px-3 py-2 text-sm" placeholder="GitHub URL" value={form.github_url ?? ""} onChange={(event) => updateField("github_url", event.target.value)} />
         </div>
         <div className="grid gap-2">
-          <input className="rounded-md border border-line bg-ink px-3 py-2 text-sm" placeholder="Resume URL" value={form.resume_url ?? ""} onChange={(event) => updateField("resume_url", event.target.value)} />
+          <label className="text-xs text-muted">Resume URL — defaults to local file <code className="text-accent">{LOCAL_RESUME_PATH}</code></label>
+          <input className="rounded-md border border-line bg-ink px-3 py-2 text-sm" placeholder={LOCAL_RESUME_PATH} value={form.resume_url ?? ""} onChange={(event) => updateField("resume_url", event.target.value)} />
           <label className="flex cursor-pointer items-center justify-center gap-2 rounded-md border border-dashed border-line bg-panel px-3 py-3 text-sm text-muted hover:border-accent hover:text-white">
             <FileUp className="h-4 w-4" />
-            {uploading ? "Uploading resume..." : "Upload resume PDF and use as resume_url"}
+            {uploading ? "Uploading resume..." : "Upload resume PDF via Cloudinary"}
             <input className="hidden" type="file" accept=".pdf,application/pdf" disabled={uploading} onChange={(event) => void handleResumeUpload(event.target.files?.[0])} />
           </label>
         </div>

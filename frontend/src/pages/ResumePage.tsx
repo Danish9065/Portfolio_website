@@ -11,17 +11,15 @@ const RESUME_FILENAME = "Danish-MD-Resume.pdf";
 export function ResumePage() {
   const profile = useQuery({ queryKey: ["profile"], queryFn: getProfile });
   const skills = useQuery({ queryKey: ["skills"], queryFn: getSkills });
-  const resumeUrl = profile.data?.resume_url || "/resume-placeholder.txt";
+  const resumeUrl = profile.data?.resume_url || "/Danish-MD-Resume.pdf";
   const [downloading, setDownloading] = useState(false);
 
   async function downloadResume(event: MouseEvent<HTMLAnchorElement>) {
-    if (!profile.data?.resume_url) return;
-
     event.preventDefault();
     setDownloading(true);
 
     try {
-      const response = await fetch(profile.data.resume_url);
+      const response = await fetch(resumeUrl);
       if (!response.ok) throw new Error("Resume download failed");
 
       const blob = await response.blob();
@@ -34,7 +32,7 @@ export function ResumePage() {
       link.remove();
       URL.revokeObjectURL(objectUrl);
     } catch {
-      window.open(profile.data.resume_url, "_blank", "noopener,noreferrer");
+      window.open(resumeUrl, "_blank", "noopener,noreferrer");
     } finally {
       setDownloading(false);
     }
