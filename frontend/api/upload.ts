@@ -28,7 +28,7 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
   // Since we just need the frontend to be able to upload, and Vercel/Supabase handles RLS on the DB,
   // we'll just check if a token was sent.
 
-  const { file, type } = req.body;
+  const { file, type } = req.body || {};
   if (!file) {
     return res.status(400).json({ error: "No file provided" });
   }

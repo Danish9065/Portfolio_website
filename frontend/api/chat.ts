@@ -15,6 +15,21 @@ type ApiResponse = {
   json: (payload: unknown) => void;
 };
 
+type SupabaseQuery = {
+  select: (columns?: string) => SupabaseQuery;
+  limit: (count: number) => SupabaseQuery;
+  maybeSingle: () => Promise<{ data: unknown }>;
+};
+
+type SupabaseTable = {
+  select: (columns?: string) => SupabaseQuery & Promise<{ data: unknown[] | null }>;
+  insert: (payload: unknown) => Promise<unknown>;
+};
+
+type SupabaseClientLike = {
+  from: (table: string) => SupabaseTable;
+};
+
 const SYSTEM_RULES = (
   "You are the AI assistant for this portfolio. Answer only using the provided portfolio context. " +
   "If something is unknown, say that the owner has not provided that detail yet and suggest contacting them. " +
@@ -45,10 +60,10 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
     skills: portfolioSnapshot.skills,
     experience: portfolioSnapshot.experience,
   };
-  let supabase: ReturnType<typeof createClient> | null = null;
+  let supabase: SupabaseClientLike | null = null;
 
   if (supabaseUrl && supabaseKey) {
-    supabase = createClient(supabaseUrl, supabaseKey);
+    supabase = createClient(supabaseUrl, supabaseKey) as unknown as SupabaseClientLike;
     try {
       const [profileRes, projectsRes, servicesRes, skillsRes, expRes] = await Promise.all([
         supabase.from("profiles").select("*").limit(1).maybeSingle(),
@@ -101,7 +116,7 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
   if (supabase) {
     try {
       await supabase.from("chat_logs").insert([
-        { session_id, role: "user", message: message },
+        { session_id, role: "user", message: message ?? "" },
         { session_id, role: "assistant", message: answer }
       ]);
     } catch (e) {
