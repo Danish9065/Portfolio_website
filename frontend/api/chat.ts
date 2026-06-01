@@ -1,9 +1,10 @@
 import { createClient } from "@supabase/supabase-js";
 import crypto from "crypto";
+import { z } from "zod";
 import { portfolioSnapshot } from "../src/data/portfolioSnapshot";
+import { checkRateLimit, getClientIp, type ApiRequest as BaseApiRequest } from "./_utils";
 
-type ApiRequest = {
-  method?: string;
+type ApiRequest = BaseApiRequest & {
   body?: {
     message?: string;
     session_id?: string;
@@ -37,11 +38,48 @@ const SYSTEM_RULES = (
 );
 
 type PortfolioContext = Pick<typeof portfolioSnapshot, "profile" | "projects" | "services" | "skills" | "experience">;
+const chatSchema = z.object({
+  message: z.string().trim().min(1).max(1000),
+  session_id: z.string().trim().max(120).optional(),
+});
+
+function parseBody(body: ApiRequest["body"] | string | undefined) {
+  if (typeof body !== "string") return body || {};
+
+  try {
+    return JSON.parse(body) as ApiRequest["body"];
+  } catch {
+    return {};
+  }
+}
 
 export default async function handler(req: ApiRequest, res: ApiResponse) {
+  try {
+    return await handleChat(req, res);
+  } catch (error) {
+    console.error("Chat API failed:", error);
+    return res.status(500).json({
+      error: "The AI assistant is temporarily unavailable. Please try again later or use the contact form.",
+      configured: false
+    });
+  }
+}
+
+async function handleChat(req: ApiRequest, res: ApiResponse) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-  const { message, session_id: providedSessionId } = req.body || {};
+  const ip = getClientIp(req);
+  const rateLimit = checkRateLimit({ key: `chat:${ip}`, limit: 20, windowMs: 60 * 60 * 1000 });
+  if (!rateLimit.ok) {
+    return res.status(429).json({ error: "Too many chat messages. Try again later.", retry_after: rateLimit.retryAfter });
+  }
+
+  const parsed = chatSchema.safeParse(parseBody(req.body));
+  if (!parsed.success) {
+    return res.status(400).json({ error: "Please enter a message between 1 and 1000 characters." });
+  }
+
+  const { message, session_id: providedSessionId } = parsed.data;
   const session_id = providedSessionId || crypto.randomUUID();
   const apiKey = process.env.GEMINI_API_KEY;
 
@@ -65,8 +103,8 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
   let supabase: SupabaseClientLike | null = null;
 
   if (supabaseUrl && supabaseKey) {
-    supabase = createClient(supabaseUrl, supabaseKey) as unknown as SupabaseClientLike;
     try {
+      supabase = createClient(supabaseUrl, supabaseKey) as unknown as SupabaseClientLike;
       const [profileRes, projectsRes, servicesRes, skillsRes, expRes] = await Promise.all([
         supabase.from("profiles").select("*").limit(1).maybeSingle(),
         supabase.from("projects").select("*"),
