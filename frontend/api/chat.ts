@@ -36,6 +36,8 @@ const SYSTEM_RULES = (
   "Never invent employment history, clients, metrics, awards, certifications, pricing, timelines, or years of experience."
 );
 
+type PortfolioContext = Pick<typeof portfolioSnapshot, "profile" | "projects" | "services" | "skills" | "experience">;
+
 export default async function handler(req: ApiRequest, res: ApiResponse) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
@@ -53,7 +55,7 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
 
   const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY;
-  let context = {
+  let context: PortfolioContext = {
     profile: portfolioSnapshot.profile,
     projects: portfolioSnapshot.projects,
     services: portfolioSnapshot.services,
@@ -74,11 +76,11 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
       ]);
 
       context = {
-        profile: profileRes.data || portfolioSnapshot.profile,
-        projects: projectsRes.data?.length ? projectsRes.data : portfolioSnapshot.projects,
-        services: servicesRes.data?.length ? servicesRes.data : portfolioSnapshot.services,
-        skills: skillsRes.data?.length ? skillsRes.data : portfolioSnapshot.skills,
-        experience: expRes.data?.length ? expRes.data : portfolioSnapshot.experience,
+        profile: (profileRes.data as PortfolioContext["profile"] | null) || portfolioSnapshot.profile,
+        projects: projectsRes.data?.length ? (projectsRes.data as PortfolioContext["projects"]) : portfolioSnapshot.projects,
+        services: servicesRes.data?.length ? (servicesRes.data as PortfolioContext["services"]) : portfolioSnapshot.services,
+        skills: skillsRes.data?.length ? (skillsRes.data as PortfolioContext["skills"]) : portfolioSnapshot.skills,
+        experience: expRes.data?.length ? (expRes.data as PortfolioContext["experience"]) : portfolioSnapshot.experience,
       };
     } catch (e) {
       console.error("Failed to load context for Gemini:", e);
