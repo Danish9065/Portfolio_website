@@ -1,47 +1,122 @@
-import { apiFetch } from "./client";
-import { API_BASE_URL } from "../lib/constants";
-import { getAccessToken } from "../lib/supabaseAuth";
+import { supabase } from "../lib/supabaseAuth";
 import type { ExperienceFormValues, HomeFormValues, Inquiry, ProfileFormValues, ProjectFormValues, ServiceFormValues, TestimonialFormValues } from "../types/admin";
-import type { Experience, HomeContent, Profile } from "../types/api";
-import type { Project, Service, Testimonial } from "../types/api";
+import type { Experience, HomeContent, Profile, Project, Service, Testimonial } from "../types/api";
 
-async function authHeaders() {
-  const token = await getAccessToken();
-  return token ? { Authorization: `Bearer ${token}` } as Record<string, string> : {};
-}
+const checkSupabase = () => {
+  if (!supabase) throw new Error("Supabase is not configured.");
+};
 
-export async function adminFetch<T>(path: string, init: RequestInit = {}) {
-  const existingHeaders = init.headers instanceof Headers ? Object.fromEntries(init.headers.entries()) : (init.headers as Record<string, string> | undefined) ?? {};
-  return apiFetch<T>(path, { ...init, headers: { ...(await authHeaders()), ...existingHeaders } });
-}
+export const listInquiries = async () => {
+  checkSupabase();
+  const { data, error } = await supabase!.from("contact_inquiries").select("*").order("created_at", { ascending: false });
+  if (error) throw error;
+  return data as Inquiry[];
+};
 
-export const listInquiries = () => adminFetch<Inquiry[]>("/api/admin/inquiries");
-export const createProject = (payload: ProjectFormValues) =>
-  adminFetch<Project>("/api/admin/projects", { method: "POST", body: JSON.stringify(payload) });
-export const updateProject = (id: string, payload: ProjectFormValues) =>
-  adminFetch<Project>(`/api/admin/projects/${id}`, { method: "PUT", body: JSON.stringify(payload) });
-export const deleteProject = (id: string) => adminFetch<{ ok: boolean }>(`/api/admin/projects/${id}`, { method: "DELETE" });
-export const createExperience = (payload: ExperienceFormValues) =>
-  adminFetch<Experience>("/api/admin/experience", { method: "POST", body: JSON.stringify(payload) });
-export const updateExperience = (id: string, payload: ExperienceFormValues) =>
-  adminFetch<Experience>(`/api/admin/experience/${id}`, { method: "PUT", body: JSON.stringify(payload) });
-export const deleteExperience = (id: string) =>
-  adminFetch<{ ok: boolean }>(`/api/admin/experience/${id}`, { method: "DELETE" });
-export const updateProfile = (payload: ProfileFormValues) =>
-  adminFetch<Profile>("/api/admin/profile", { method: "PUT", body: JSON.stringify(payload) });
-export const createService = (payload: ServiceFormValues) =>
-  adminFetch<Service>("/api/admin/services", { method: "POST", body: JSON.stringify(payload) });
-export const updateService = (id: string, payload: ServiceFormValues) =>
-  adminFetch<Service>(`/api/admin/services/${id}`, { method: "PUT", body: JSON.stringify(payload) });
-export const deleteService = (id: string) => adminFetch<{ ok: boolean }>(`/api/admin/services/${id}`, { method: "DELETE" });
-export const createTestimonial = (payload: TestimonialFormValues) =>
-  adminFetch<Testimonial>("/api/admin/testimonials", { method: "POST", body: JSON.stringify(payload) });
-export const updateTestimonial = (id: string, payload: TestimonialFormValues) =>
-  adminFetch<Testimonial>(`/api/admin/testimonials/${id}`, { method: "PUT", body: JSON.stringify(payload) });
-export const deleteTestimonial = (id: string) =>
-  adminFetch<{ ok: boolean }>(`/api/admin/testimonials/${id}`, { method: "DELETE" });
-export const updateHomeContent = (payload: HomeFormValues) =>
-  adminFetch<HomeContent>("/api/admin/home", { method: "PUT", body: JSON.stringify(payload) });
+export const createProject = async (payload: ProjectFormValues) => {
+  checkSupabase();
+  const { data, error } = await supabase!.from("projects").insert(payload).select().single();
+  if (error) throw error;
+  return data as Project;
+};
+
+export const updateProject = async (id: string, payload: ProjectFormValues) => {
+  checkSupabase();
+  const { data, error } = await supabase!.from("projects").update(payload).eq("id", id).select().single();
+  if (error) throw error;
+  return data as Project;
+};
+
+export const deleteProject = async (id: string) => {
+  checkSupabase();
+  const { error } = await supabase!.from("projects").delete().eq("id", id);
+  if (error) throw error;
+  return { ok: true };
+};
+
+export const createExperience = async (payload: ExperienceFormValues) => {
+  checkSupabase();
+  const { data, error } = await supabase!.from("experience").insert(payload).select().single();
+  if (error) throw error;
+  return data as Experience;
+};
+
+export const updateExperience = async (id: string, payload: ExperienceFormValues) => {
+  checkSupabase();
+  const { data, error } = await supabase!.from("experience").update(payload).eq("id", id).select().single();
+  if (error) throw error;
+  return data as Experience;
+};
+
+export const deleteExperience = async (id: string) => {
+  checkSupabase();
+  const { error } = await supabase!.from("experience").delete().eq("id", id);
+  if (error) throw error;
+  return { ok: true };
+};
+
+export const updateProfile = async (payload: ProfileFormValues) => {
+  checkSupabase();
+  const { data: existing } = await supabase!.from("profiles").select("id").limit(1).maybeSingle();
+  if (existing) {
+    const { data, error } = await supabase!.from("profiles").update(payload).eq("id", existing.id).select().single();
+    if (error) throw error;
+    return data as Profile;
+  } else {
+    const { data, error } = await supabase!.from("profiles").insert(payload).select().single();
+    if (error) throw error;
+    return data as Profile;
+  }
+};
+
+export const createService = async (payload: ServiceFormValues) => {
+  checkSupabase();
+  const { data, error } = await supabase!.from("services").insert(payload).select().single();
+  if (error) throw error;
+  return data as Service;
+};
+
+export const updateService = async (id: string, payload: ServiceFormValues) => {
+  checkSupabase();
+  const { data, error } = await supabase!.from("services").update(payload).eq("id", id).select().single();
+  if (error) throw error;
+  return data as Service;
+};
+
+export const deleteService = async (id: string) => {
+  checkSupabase();
+  const { error } = await supabase!.from("services").delete().eq("id", id);
+  if (error) throw error;
+  return { ok: true };
+};
+
+export const createTestimonial = async (payload: TestimonialFormValues) => {
+  checkSupabase();
+  const { data, error } = await supabase!.from("testimonials").insert(payload).select().single();
+  if (error) throw error;
+  return data as Testimonial;
+};
+
+export const updateTestimonial = async (id: string, payload: TestimonialFormValues) => {
+  checkSupabase();
+  const { data, error } = await supabase!.from("testimonials").update(payload).eq("id", id).select().single();
+  if (error) throw error;
+  return data as Testimonial;
+};
+
+export const deleteTestimonial = async (id: string) => {
+  checkSupabase();
+  const { error } = await supabase!.from("testimonials").delete().eq("id", id);
+  if (error) throw error;
+  return { ok: true };
+};
+
+export const updateHomeContent = async (payload: HomeFormValues) => {
+  checkSupabase();
+  const { data, error } = await supabase!.from("site_settings").upsert({ key: "home", value: payload as unknown }, { onConflict: "key" }).select().single();
+  if (error) throw error;
+  return data.value as HomeContent;
+};
 
 export interface UploadResponse {
   configured: boolean;
@@ -57,40 +132,47 @@ export interface UploadResponse {
   message?: string;
 }
 
-export async function uploadProjectImage(file: File) {
-  const token = await getAccessToken();
-  const formData = new FormData();
-  formData.append("file", file);
-
-  const response = await fetch(`${API_BASE_URL}/api/uploads/image`, {
-    method: "POST",
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
-    body: formData
+const fileToBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = error => reject(error);
   });
-  const data = (await response.json()) as UploadResponse | { detail?: string };
+};
 
-  if (!response.ok) {
-    throw new Error("detail" in data ? data.detail : "Image upload failed");
-  }
+export async function uploadProjectImage(file: File) {
+  const { data: { session } } = await supabase!.auth.getSession();
+  const token = session?.access_token;
+  const base64File = await fileToBase64(file);
 
+  const response = await fetch("/api/upload", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {})
+    },
+    body: JSON.stringify({ file: base64File, type: "image" })
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || "Image upload failed");
   return data as UploadResponse;
 }
 
 export async function uploadResume(file: File) {
-  const token = await getAccessToken();
-  const formData = new FormData();
-  formData.append("file", file);
+  const { data: { session } } = await supabase!.auth.getSession();
+  const token = session?.access_token;
+  const base64File = await fileToBase64(file);
 
-  const response = await fetch(`${API_BASE_URL}/api/uploads/resume`, {
+  const response = await fetch("/api/upload", {
     method: "POST",
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
-    body: formData
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {})
+    },
+    body: JSON.stringify({ file: base64File, type: "resume" })
   });
-  const data = (await response.json()) as UploadResponse | { detail?: string };
-
-  if (!response.ok) {
-    throw new Error("detail" in data ? data.detail : "Resume upload failed");
-  }
-
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || "Resume upload failed");
   return data as UploadResponse;
 }

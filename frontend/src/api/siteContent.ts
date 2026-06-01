@@ -1,18 +1,22 @@
-import { adminFetch, uploadProjectImage, type UploadResponse } from "./admin";
-import { apiFetch } from "./client";
+import { uploadProjectImage, type UploadResponse } from "./admin";
+import { supabase } from "../lib/supabaseAuth";
 import { canUseUnsignedCloudinaryUpload, uploadUnsignedToCloudinary } from "../lib/cloudinary";
 import type { SiteContentMedia } from "../types/api";
 
 export type SiteContentKey = "hero_media" | "home_banner" | "about_image" | (string & {});
 
-export const getSiteContent = (sectionKey: SiteContentKey) =>
-  apiFetch<SiteContentMedia | null>(`/api/site-content/${sectionKey}`);
+export const getSiteContent = async (sectionKey: SiteContentKey) => {
+  if (!supabase) return null;
+  const { data } = await supabase.from("site_content").select("*").eq("section_key", sectionKey).maybeSingle();
+  return data as SiteContentMedia | null;
+};
 
-export const saveSiteContent = (sectionKey: SiteContentKey, payload: SiteContentMedia) =>
-  adminFetch<SiteContentMedia>(`/api/admin/site-content/${sectionKey}`, {
-    method: "PUT",
-    body: JSON.stringify({ ...payload, section_key: sectionKey })
-  });
+export const saveSiteContent = async (sectionKey: SiteContentKey, payload: SiteContentMedia) => {
+  if (!supabase) throw new Error("Supabase is not configured.");
+  const { data, error } = await supabase.from("site_content").upsert({ ...payload, section_key: sectionKey }, { onConflict: "section_key" }).select().single();
+  if (error) throw error;
+  return data as SiteContentMedia;
+};
 
 function uploadResponseToMedia(sectionKey: SiteContentKey, result: UploadResponse): SiteContentMedia {
   return {

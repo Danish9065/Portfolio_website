@@ -48,7 +48,16 @@ export const portfolioSnapshot: {
     },
     projects: {
       heading: "Project",
-      items: []
+      items: [
+        {
+          number: "01",
+          name: "Flat Expense Calculator",
+          category: "Full-stack",
+          images: [
+            "https://res.cloudinary.com/dbdodnaxd/image/upload/v1779705885/portfolio/images/tswjyzgxzzqyyb1vumy6.png"
+          ]
+        }
+      ]
     }
   },
   profile: {
