@@ -1,121 +1,138 @@
 import { supabase } from "../lib/supabaseAuth";
 import type { ExperienceFormValues, HomeFormValues, Inquiry, ProfileFormValues, ProjectFormValues, ServiceFormValues, TestimonialFormValues } from "../types/admin";
-import type { Experience, HomeContent, Profile, Project, Service, Testimonial } from "../types/api";
+import type { Experience, HomeContent, Profile, Project, Service, SiteContentMedia, Testimonial } from "../types/api";
 
 const checkSupabase = () => {
   if (!supabase) throw new Error("Supabase is not configured.");
 };
 
-export const listInquiries = async () => {
+async function adminFetch<T>(path: string, init: RequestInit = {}) {
   checkSupabase();
-  const { data, error } = await supabase!.from("contact_inquiries").select("*").order("created_at", { ascending: false });
-  if (error) throw error;
-  return data as Inquiry[];
+  const { data: { session } } = await supabase!.auth.getSession();
+  const token = session?.access_token;
+
+  const response = await fetch(path, {
+    ...init,
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...init.headers
+    }
+  });
+  const text = await response.text();
+  const data = text ? JSON.parse(text) : null;
+
+  if (!response.ok) {
+    const message = data?.error || data?.message || "Admin request failed";
+    throw new Error(message);
+  }
+
+  return data as T;
+}
+
+export const listInquiries = async () => {
+  return adminFetch<Inquiry[]>("/api/admin/inquiries");
 };
 
 export const createProject = async (payload: ProjectFormValues) => {
-  checkSupabase();
-  const { data, error } = await supabase!.from("projects").insert(payload).select().single();
-  if (error) throw error;
-  return data as Project;
+  return adminFetch<Project>("/api/admin/projects", {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
 };
 
 export const updateProject = async (id: string, payload: ProjectFormValues) => {
-  checkSupabase();
-  const { data, error } = await supabase!.from("projects").update(payload).eq("id", id).select().single();
-  if (error) throw error;
-  return data as Project;
+  return adminFetch<Project>(`/api/admin/projects?id=${encodeURIComponent(id)}`, {
+    method: "PUT",
+    body: JSON.stringify(payload)
+  });
 };
 
 export const deleteProject = async (id: string) => {
-  checkSupabase();
-  const { error } = await supabase!.from("projects").delete().eq("id", id);
-  if (error) throw error;
-  return { ok: true };
+  return adminFetch<{ ok: true }>(`/api/admin/projects?id=${encodeURIComponent(id)}`, {
+    method: "DELETE"
+  });
 };
 
 export const createExperience = async (payload: ExperienceFormValues) => {
-  checkSupabase();
-  const { data, error } = await supabase!.from("experience").insert(payload).select().single();
-  if (error) throw error;
-  return data as Experience;
+  return adminFetch<Experience>("/api/admin/experience", {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
 };
 
 export const updateExperience = async (id: string, payload: ExperienceFormValues) => {
-  checkSupabase();
-  const { data, error } = await supabase!.from("experience").update(payload).eq("id", id).select().single();
-  if (error) throw error;
-  return data as Experience;
+  return adminFetch<Experience>(`/api/admin/experience?id=${encodeURIComponent(id)}`, {
+    method: "PUT",
+    body: JSON.stringify(payload)
+  });
 };
 
 export const deleteExperience = async (id: string) => {
-  checkSupabase();
-  const { error } = await supabase!.from("experience").delete().eq("id", id);
-  if (error) throw error;
-  return { ok: true };
+  return adminFetch<{ ok: true }>(`/api/admin/experience?id=${encodeURIComponent(id)}`, {
+    method: "DELETE"
+  });
 };
 
 export const updateProfile = async (payload: ProfileFormValues) => {
-  checkSupabase();
-  const { data: existing } = await supabase!.from("profiles").select("id").limit(1).maybeSingle();
-  if (existing) {
-    const { data, error } = await supabase!.from("profiles").update(payload).eq("id", existing.id).select().single();
-    if (error) throw error;
-    return data as Profile;
-  } else {
-    const { data, error } = await supabase!.from("profiles").insert(payload).select().single();
-    if (error) throw error;
-    return data as Profile;
-  }
+  return adminFetch<Profile>("/api/admin/profile", {
+    method: "PUT",
+    body: JSON.stringify(payload)
+  });
 };
 
 export const createService = async (payload: ServiceFormValues) => {
-  checkSupabase();
-  const { data, error } = await supabase!.from("services").insert(payload).select().single();
-  if (error) throw error;
-  return data as Service;
+  return adminFetch<Service>("/api/admin/services", {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
 };
 
 export const updateService = async (id: string, payload: ServiceFormValues) => {
-  checkSupabase();
-  const { data, error } = await supabase!.from("services").update(payload).eq("id", id).select().single();
-  if (error) throw error;
-  return data as Service;
+  return adminFetch<Service>(`/api/admin/services?id=${encodeURIComponent(id)}`, {
+    method: "PUT",
+    body: JSON.stringify(payload)
+  });
 };
 
 export const deleteService = async (id: string) => {
-  checkSupabase();
-  const { error } = await supabase!.from("services").delete().eq("id", id);
-  if (error) throw error;
-  return { ok: true };
+  return adminFetch<{ ok: true }>(`/api/admin/services?id=${encodeURIComponent(id)}`, {
+    method: "DELETE"
+  });
 };
 
 export const createTestimonial = async (payload: TestimonialFormValues) => {
-  checkSupabase();
-  const { data, error } = await supabase!.from("testimonials").insert(payload).select().single();
-  if (error) throw error;
-  return data as Testimonial;
+  return adminFetch<Testimonial>("/api/admin/testimonials", {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
 };
 
 export const updateTestimonial = async (id: string, payload: TestimonialFormValues) => {
-  checkSupabase();
-  const { data, error } = await supabase!.from("testimonials").update(payload).eq("id", id).select().single();
-  if (error) throw error;
-  return data as Testimonial;
+  return adminFetch<Testimonial>(`/api/admin/testimonials?id=${encodeURIComponent(id)}`, {
+    method: "PUT",
+    body: JSON.stringify(payload)
+  });
 };
 
 export const deleteTestimonial = async (id: string) => {
-  checkSupabase();
-  const { error } = await supabase!.from("testimonials").delete().eq("id", id);
-  if (error) throw error;
-  return { ok: true };
+  return adminFetch<{ ok: true }>(`/api/admin/testimonials?id=${encodeURIComponent(id)}`, {
+    method: "DELETE"
+  });
 };
 
 export const updateHomeContent = async (payload: HomeFormValues) => {
-  checkSupabase();
-  const { data, error } = await supabase!.from("site_settings").upsert({ key: "home", value: payload as unknown }, { onConflict: "key" }).select().single();
-  if (error) throw error;
-  return data.value as HomeContent;
+  return adminFetch<HomeContent>("/api/admin/home", {
+    method: "PUT",
+    body: JSON.stringify(payload)
+  });
+};
+
+export const saveSiteContentMedia = async (payload: SiteContentMedia) => {
+  return adminFetch<SiteContentMedia>("/api/admin/site-content", {
+    method: "PUT",
+    body: JSON.stringify(payload)
+  });
 };
 
 export interface UploadResponse {

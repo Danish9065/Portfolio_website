@@ -8,9 +8,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Load the vercel API routes dynamically
-app.all("/api/:route", async (req, res) => {
-  const { route } = req.params;
+// Load the Vercel API routes dynamically, including nested routes.
+app.all(/^\/api\/(.+)$/, async (req, res) => {
+  const route = req.params[0];
+  if (!route || route.includes("..")) {
+    return res.status(400).json({ error: "Invalid API route" });
+  }
+
   try {
     const handler = (await import(`./api/${route}.ts`)).default;
     await handler(req, res);

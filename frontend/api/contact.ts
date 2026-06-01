@@ -1,8 +1,9 @@
 import { Resend } from "resend";
 import { createClient } from "@supabase/supabase-js";
+import { z } from "zod";
+import { checkRateLimit, getClientIp, type ApiRequest as BaseApiRequest } from "./_utils";
 
-type ApiRequest = {
-  method?: string;
+type ApiRequest = BaseApiRequest & {
   body?: {
     name?: string;
     email?: string;
@@ -19,12 +20,33 @@ type ApiResponse = {
   json: (payload: unknown) => void;
 };
 
+const contactSchema = z.object({
+  name: z.string().trim().min(2).max(80),
+  email: z.string().trim().email().max(254),
+  purpose: z.enum(["job", "freelance", "general"]),
+  message: z.string().trim().min(20).max(2000),
+  website: z.string().trim().max(200).optional(),
+  company: z.string().trim().max(120).optional(),
+  budget: z.string().trim().max(80).optional(),
+});
+
 export default async function handler(req: ApiRequest, res: ApiResponse) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { name, email, purpose, message, website, company, budget } = req.body || {};
+  const ip = getClientIp(req);
+  const rateLimit = checkRateLimit({ key: `contact:${ip}`, limit: 5, windowMs: 10 * 60 * 1000 });
+  if (!rateLimit.ok) {
+    return res.status(429).json({ error: "Too many contact submissions. Try again later.", retry_after: rateLimit.retryAfter });
+  }
+
+  const parsed = contactSchema.safeParse(req.body || {});
+  if (!parsed.success) {
+    return res.status(400).json({ error: "Please check the form fields and try again." });
+  }
+
+  const { name, email, purpose, message, website, company, budget } = parsed.data;
 
   if (website) {
     return res.status(200).json({
