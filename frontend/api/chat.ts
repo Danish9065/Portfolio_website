@@ -1,10 +1,11 @@
-import { createClient } from "@supabase/supabase-js";
 import crypto from "crypto";
-import { z } from "zod";
-import { portfolioSnapshot } from "../src/data/portfolioSnapshot";
-import { checkRateLimit, getClientIp, type ApiRequest as BaseApiRequest } from "./_utils";
 
-type ApiRequest = BaseApiRequest & {
+type ApiRequest = {
+  method?: string;
+  headers?: Record<string, string | string[] | undefined>;
+  socket?: {
+    remoteAddress?: string;
+  };
   body?: {
     message?: string;
     session_id?: string;
@@ -16,32 +17,66 @@ type ApiResponse = {
   json: (payload: unknown) => void;
 };
 
-type SupabaseQuery = {
-  select: (columns?: string) => SupabaseQuery;
-  limit: (count: number) => SupabaseQuery;
-  maybeSingle: () => Promise<{ data: unknown }>;
-};
-
-type SupabaseTable = {
-  select: (columns?: string) => SupabaseQuery & Promise<{ data: unknown[] | null }>;
-  insert: (payload: unknown) => Promise<unknown>;
-};
-
-type SupabaseClientLike = {
-  from: (table: string) => SupabaseTable;
-};
-
 const SYSTEM_RULES = (
   "You are the AI assistant for this portfolio. Answer only using the provided portfolio context. " +
   "If something is unknown, say that the owner has not provided that detail yet and suggest contacting them. " +
   "Never invent employment history, clients, metrics, awards, certifications, pricing, timelines, or years of experience."
 );
 
-type PortfolioContext = Pick<typeof portfolioSnapshot, "profile" | "projects" | "services" | "skills" | "experience">;
-const chatSchema = z.object({
-  message: z.string().trim().min(1).max(1000),
-  session_id: z.string().trim().max(120).optional(),
-});
+const portfolioContext = {
+  profile: {
+    full_name: "Danish MD",
+    title: "AI Full-stack Developer",
+    bio: "An AI full-stack developer building intelligent, practical, and user-friendly digital products.",
+    location: "India",
+    email: "danish90654@gmail.com",
+    linkedin_url: "https://www.linkedin.com/in/danish90654/",
+    github_url: "https://github.com/Danish9065",
+  },
+  services: [
+    "AI/ML application development",
+    "Frontend development with React, TypeScript, Vite, and Tailwind CSS",
+    "Backend development with Python, FastAPI, Node.js, REST APIs, and validation",
+    "Web design",
+    "Motion design",
+    "3D modeling",
+    "Branding",
+    "Database and cloud work with Supabase, PostgreSQL, Cloudinary, Vercel, and Render",
+  ],
+  skills: [
+    "React",
+    "Next.js",
+    "TypeScript",
+    "JavaScript",
+    "Tailwind CSS",
+    "Framer Motion",
+    "Python",
+    "FastAPI",
+    "Node.js",
+    "REST APIs",
+    "PostgreSQL",
+    "Supabase",
+    "Cloudinary",
+    "Vercel",
+    "Git",
+    "GitHub",
+    "AI application development",
+    "Machine learning",
+  ],
+  projects: [
+    "Flat Expense Calculator",
+    "AuraPalette",
+    "Portfolio Web App",
+    "Zaheer's Jewellers",
+    "Little Mumbai Choice",
+    "MediPresence Clinic App",
+    "HealthSaathi",
+    "Portfolio AI Assistant",
+  ],
+  experience: [],
+};
+
+const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
 
 function parseBody(body: ApiRequest["body"] | string | undefined) {
   if (typeof body !== "string") return body || {};
@@ -51,6 +86,36 @@ function parseBody(body: ApiRequest["body"] | string | undefined) {
   } catch {
     return {};
   }
+}
+
+function getHeader(req: ApiRequest, name: string) {
+  const value = req.headers?.[name.toLowerCase()] ?? req.headers?.[name];
+  return Array.isArray(value) ? value[0] : value;
+}
+
+function getClientIp(req: ApiRequest) {
+  const forwardedFor = getHeader(req, "x-forwarded-for");
+  if (forwardedFor) return forwardedFor.split(",")[0]?.trim() || "unknown";
+  return req.socket?.remoteAddress || "unknown";
+}
+
+function checkRateLimit(key: string) {
+  const now = Date.now();
+  const limit = 20;
+  const windowMs = 60 * 60 * 1000;
+  const existing = rateLimitStore.get(key);
+
+  if (!existing || existing.resetAt <= now) {
+    rateLimitStore.set(key, { count: 1, resetAt: now + windowMs });
+    return { ok: true, retryAfter: 0 };
+  }
+
+  if (existing.count >= limit) {
+    return { ok: false, retryAfter: Math.ceil((existing.resetAt - now) / 1000) };
+  }
+
+  existing.count += 1;
+  return { ok: true, retryAfter: 0 };
 }
 
 export default async function handler(req: ApiRequest, res: ApiResponse) {
@@ -69,18 +134,20 @@ async function handleChat(req: ApiRequest, res: ApiResponse) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
   const ip = getClientIp(req);
-  const rateLimit = checkRateLimit({ key: `chat:${ip}`, limit: 20, windowMs: 60 * 60 * 1000 });
+  const rateLimit = checkRateLimit(`chat:${ip}`);
   if (!rateLimit.ok) {
     return res.status(429).json({ error: "Too many chat messages. Try again later.", retry_after: rateLimit.retryAfter });
   }
 
-  const parsed = chatSchema.safeParse(parseBody(req.body));
-  if (!parsed.success) {
+  const body = parseBody(req.body);
+  const message = typeof body.message === "string" ? body.message.trim() : "";
+  const providedSessionId = typeof body.session_id === "string" ? body.session_id.trim() : undefined;
+
+  if (!message || message.length > 1000) {
     return res.status(400).json({ error: "Please enter a message between 1 and 1000 characters." });
   }
 
-  const { message, session_id: providedSessionId } = parsed.data;
-  const session_id = providedSessionId || crypto.randomUUID();
+  const session_id = providedSessionId?.slice(0, 120) || crypto.randomUUID();
   const apiKey = process.env.GEMINI_API_KEY;
 
   if (!apiKey) {
@@ -91,43 +158,9 @@ async function handleChat(req: ApiRequest, res: ApiResponse) {
     });
   }
 
-  const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
-  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY;
-  let context: PortfolioContext = {
-    profile: portfolioSnapshot.profile,
-    projects: portfolioSnapshot.projects,
-    services: portfolioSnapshot.services,
-    skills: portfolioSnapshot.skills,
-    experience: portfolioSnapshot.experience,
-  };
-  let supabase: SupabaseClientLike | null = null;
-
-  if (supabaseUrl && supabaseKey) {
-    try {
-      supabase = createClient(supabaseUrl, supabaseKey) as unknown as SupabaseClientLike;
-      const [profileRes, projectsRes, servicesRes, skillsRes, expRes] = await Promise.all([
-        supabase.from("profiles").select("*").limit(1).maybeSingle(),
-        supabase.from("projects").select("*"),
-        supabase.from("services").select("*"),
-        supabase.from("skills").select("*"),
-        supabase.from("experience").select("*"),
-      ]);
-
-      context = {
-        profile: (profileRes.data as PortfolioContext["profile"] | null) || portfolioSnapshot.profile,
-        projects: projectsRes.data?.length ? (projectsRes.data as PortfolioContext["projects"]) : portfolioSnapshot.projects,
-        services: servicesRes.data?.length ? (servicesRes.data as PortfolioContext["services"]) : portfolioSnapshot.services,
-        skills: skillsRes.data?.length ? (skillsRes.data as PortfolioContext["skills"]) : portfolioSnapshot.skills,
-        experience: expRes.data?.length ? (expRes.data as PortfolioContext["experience"]) : portfolioSnapshot.experience,
-      };
-    } catch (e) {
-      console.error("Failed to load context for Gemini:", e);
-    }
-  }
-
   let answer = "I could not produce an answer from the configured portfolio context.";
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-  const prompt = `${SYSTEM_RULES}\n\nPortfolio context JSON:\n${JSON.stringify(context)}\n\nQuestion: ${message}`;
+  const prompt = `${SYSTEM_RULES}\n\nPortfolio context JSON:\n${JSON.stringify(portfolioContext)}\n\nQuestion: ${message}`;
   const payload = {
     contents: [{ parts: [{ text: prompt }] }],
     generationConfig: { temperature: 0.2, maxOutputTokens: 500 }
@@ -150,18 +183,6 @@ async function handleChat(req: ApiRequest, res: ApiResponse) {
   } catch (exc) {
     console.error("Gemini API request failed", exc);
     answer = "The portfolio data is connected, but the AI provider did not return an answer. Please use the contact form for this question.";
-  }
-
-  // Insert chat logs if Supabase is available
-  if (supabase) {
-    try {
-      await supabase.from("chat_logs").insert([
-        { session_id, role: "user", message: message ?? "" },
-        { session_id, role: "assistant", message: answer }
-      ]);
-    } catch (e) {
-      console.error("Could not insert chat logs", e);
-    }
   }
 
   return res.status(200).json({
