@@ -3,9 +3,9 @@ import type { Experience, HomeContent, Profile, Project, Service, Skill, Testimo
 import { portfolioSnapshot } from "../data/portfolioSnapshot";
 
 export const getHomeContent = async (): Promise<HomeContent> => {
-  if (!supabase) return portfolioSnapshot.home;
-  const { data } = await supabase.from("site_settings").select("value").eq("key", "home").maybeSingle();
-  return (data?.value as HomeContent) || portfolioSnapshot.home;
+  const response = await fetch("/api/home");
+  if (!response.ok) throw new Error("Home content could not be loaded.");
+  return response.json() as Promise<HomeContent>;
 };
 
 export const getProfile = async (): Promise<Profile> => {
