@@ -28,7 +28,6 @@ export function Navbar() {
         </Link>
         <div className="hidden items-center gap-1 lg:flex">
           {navItems.map((item) => <NavLink key={item.to} to={item.to} className={linkClass}>{item.label}</NavLink>)}
-          <NavLink to="/admin" className={linkClass}>Admin</NavLink>
         </div>
         <button className="lg:hidden" onClick={() => setOpen((value) => !value)} aria-label="Toggle navigation">
           {open ? <X /> : <Menu />}
@@ -37,7 +36,6 @@ export function Navbar() {
       {open ? (
         <div className="container-shell grid gap-2 pb-4 lg:hidden">
           {navItems.map((item) => <NavLink key={item.to} to={item.to} onClick={() => setOpen(false)} className={linkClass}>{item.label}</NavLink>)}
-          <NavLink to="/admin" onClick={() => setOpen(false)} className={linkClass}>Admin</NavLink>
         </div>
       ) : null}
     </header>

@@ -6,5 +6,5 @@ import { SectionHeader } from "../components/SectionHeader";
 
 export function ExperiencePage() {
   const { data = [] } = useQuery({ queryKey: ["experience"], queryFn: getExperience });
-  return <RevealSection className="container-shell py-14"><SectionHeader eyebrow="Experience" title="Timeline for recruiters and hiring teams" body="Use this page for real work history, internships, education, certifications, and role fit." /><ExperienceTimeline items={data} /></RevealSection>;
+  return <RevealSection className="container-shell py-14"><SectionHeader eyebrow="Experience" title="Experience and education" body="A timeline of my work, learning, certifications, and technical growth." /><ExperienceTimeline items={data} /></RevealSection>;
 }
