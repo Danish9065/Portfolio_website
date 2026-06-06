@@ -7,6 +7,12 @@ type ProjectRequest = ApiRequest & {
 
 export default async function handler(req: ProjectRequest, res: ApiResponse) {
   return withAdmin(req, res, async ({ supabase }) => {
+    if (req.method === "GET") {
+      const { data, error } = await supabase.from("projects").select("*").order("sort_order");
+      if (error) throw error;
+      return res.status(200).json(data);
+    }
+
     if (req.method === "POST") {
       const parsed = projectSchema.safeParse(req.body || {});
       if (!parsed.success) return rejectValidation(res);
@@ -32,8 +38,9 @@ export default async function handler(req: ProjectRequest, res: ApiResponse) {
       const id = getId(req);
       if (!id) return res.status(400).json({ error: "A valid project id is required." });
 
-      const { error } = await supabase.from("projects").delete().eq("id", id);
+      const { data, error } = await supabase.from("projects").delete().eq("id", id).select("id").maybeSingle();
       if (error) throw error;
+      if (!data) return res.status(404).json({ error: "Project not found." });
       return res.status(200).json({ ok: true });
     }
 

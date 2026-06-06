@@ -34,6 +34,10 @@ export const listInquiries = async () => {
   return adminFetch<Inquiry[]>("/api/admin/inquiries");
 };
 
+export const listAdminProjects = async () => {
+  return adminFetch<Project[]>("/api/admin/projects");
+};
+
 export const createProject = async (payload: ProjectFormValues) => {
   return adminFetch<Project>("/api/admin/projects", {
     method: "POST",

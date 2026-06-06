@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Edit3, Trash2, X } from "lucide-react";
-import { deleteProject, createProject, updateProject } from "../../api/admin";
-import { getProjects } from "../../api/portfolio";
+import { deleteProject, createProject, listAdminProjects, updateProject } from "../../api/admin";
 import { AdminProjectForm } from "../../components/admin/AdminProjectForm";
 import { useToast } from "../../components/ToastProvider";
 import type { Project } from "../../types/api";
@@ -12,7 +11,7 @@ export function AdminProjectsPage() {
   const client = useQueryClient();
   const { notify } = useToast();
   const [editingProject, setEditingProject] = useState<Project | null>(null);
-  const { data = [] } = useQuery({ queryKey: ["projects"], queryFn: getProjects });
+  const { data = [] } = useQuery({ queryKey: ["admin-projects"], queryFn: listAdminProjects });
 
   return (
     <section className="grid gap-8 lg:grid-cols-[1fr_0.9fr]">
@@ -29,7 +28,7 @@ export function AdminProjectsPage() {
                 <button className="inline-flex items-center gap-1 rounded-md border border-red-300/20 px-3 py-2 text-sm text-red-200 hover:border-red-200/60 hover:text-red-100" onClick={async () => {
                   try {
                     await deleteProject(project.id);
-                    client.setQueryData<Project[]>(["projects"], (current = []) => current.filter((item) => item.id !== project.id));
+                    client.setQueryData<Project[]>(["admin-projects"], (current = []) => current.filter((item) => item.id !== project.id));
                     await client.invalidateQueries({ queryKey: ["projects"] });
                     if (editingProject?.id === project.id) setEditingProject(null);
                     notify("Project deleted", "success");
@@ -54,12 +53,12 @@ export function AdminProjectsPage() {
           try {
             if (editingProject) {
               const saved = await updateProject(editingProject.id, values as ProjectFormValues);
-              client.setQueryData<Project[]>(["projects"], (current = []) => current.map((item) => item.id === saved.id ? saved : item).sort((a, b) => a.sort_order - b.sort_order));
+              client.setQueryData<Project[]>(["admin-projects"], (current = []) => current.map((item) => item.id === saved.id ? saved : item).sort((a, b) => a.sort_order - b.sort_order));
               setEditingProject(saved);
               notify("Project updated", "success");
             } else {
               const saved = await createProject(values as ProjectFormValues);
-              client.setQueryData<Project[]>(["projects"], (current = []) => [...current, saved].sort((a, b) => a.sort_order - b.sort_order));
+              client.setQueryData<Project[]>(["admin-projects"], (current = []) => [...current, saved].sort((a, b) => a.sort_order - b.sort_order));
               notify("Project saved", "success");
             }
             await client.invalidateQueries({ queryKey: ["projects"] });
