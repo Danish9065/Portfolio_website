@@ -1,7 +1,7 @@
 import { Resend } from "resend";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
-import { checkRateLimit, getClientIp, type ApiRequest as BaseApiRequest } from "./_utils";
+import { checkRateLimit, getClientIp, type ApiRequest as BaseApiRequest } from "./_utils.js";
 
 type ApiRequest = BaseApiRequest & {
   body?: {

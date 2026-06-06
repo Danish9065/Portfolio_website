@@ -1,5 +1,5 @@
-import type { ApiRequest } from "../_utils";
-import { rejectMethod, type ApiResponse, withAdmin } from "./_shared";
+import type { ApiRequest } from "../_utils.js";
+import { rejectMethod, type ApiResponse, withAdmin } from "./_shared.js";
 
 export default async function handler(req: ApiRequest, res: ApiResponse) {
   return withAdmin(req, res, async ({ supabase }) => {

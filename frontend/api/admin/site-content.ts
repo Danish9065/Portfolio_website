@@ -1,5 +1,5 @@
-import type { ApiRequest } from "../_utils";
-import { rejectMethod, rejectValidation, siteContentSchema, type ApiResponse, withAdmin } from "./_shared";
+import type { ApiRequest } from "../_utils.js";
+import { rejectMethod, rejectValidation, siteContentSchema, type ApiResponse, withAdmin } from "./_shared.js";
 
 type SiteContentRequest = ApiRequest & {
   body?: unknown;

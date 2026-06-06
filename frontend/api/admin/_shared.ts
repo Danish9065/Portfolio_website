@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createSupabaseAdminClient, getClientIp, getQueryValue, requireAdmin, checkRateLimit, type ApiRequest } from "../_utils";
+import { createSupabaseAdminClient, getClientIp, getQueryValue, requireAdmin, checkRateLimit, type ApiRequest } from "../_utils.js";
 
 export type ApiResponse = {
   status: (code: number) => ApiResponse;

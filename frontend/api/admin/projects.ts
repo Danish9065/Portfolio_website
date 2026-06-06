@@ -1,5 +1,5 @@
-import type { ApiRequest } from "../_utils";
-import { getId, projectSchema, rejectMethod, rejectValidation, type ApiResponse, withAdmin } from "./_shared";
+import type { ApiRequest } from "../_utils.js";
+import { getId, projectSchema, rejectMethod, rejectValidation, type ApiResponse, withAdmin } from "./_shared.js";
 
 type ProjectRequest = ApiRequest & {
   body?: unknown;

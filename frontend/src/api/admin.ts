@@ -158,6 +158,16 @@ const fileToBase64 = (file: File): Promise<string> => {
   });
 };
 
+async function readUploadResponse(response: Response) {
+  const text = await response.text();
+
+  try {
+    return JSON.parse(text) as UploadResponse & { error?: string };
+  } catch {
+    return { error: response.ok ? "The upload server returned an invalid response." : text || "Upload server failed." };
+  }
+}
+
 export async function uploadProjectImage(file: File) {
   const { data: { session } } = await supabase!.auth.getSession();
   const token = session?.access_token;
@@ -171,7 +181,7 @@ export async function uploadProjectImage(file: File) {
     },
     body: JSON.stringify({ file: base64File, type: "image" })
   });
-  const data = await response.json();
+  const data = await readUploadResponse(response);
   if (!response.ok) throw new Error(data.error || "Image upload failed");
   return data as UploadResponse;
 }
@@ -189,7 +199,7 @@ export async function uploadResume(file: File) {
     },
     body: JSON.stringify({ file: base64File, type: "resume" })
   });
-  const data = await response.json();
+  const data = await readUploadResponse(response);
   if (!response.ok) throw new Error(data.error || "Resume upload failed");
   return data as UploadResponse;
 }

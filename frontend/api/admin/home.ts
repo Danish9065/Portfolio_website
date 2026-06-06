@@ -1,5 +1,5 @@
-import type { ApiRequest } from "../_utils";
-import { homeSchema, rejectMethod, rejectValidation, type ApiResponse, withAdmin } from "./_shared";
+import type { ApiRequest } from "../_utils.js";
+import { homeSchema, rejectMethod, rejectValidation, type ApiResponse, withAdmin } from "./_shared.js";
 
 type HomeRequest = ApiRequest & {
   body?: unknown;
