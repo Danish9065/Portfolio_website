@@ -11,7 +11,7 @@ values (
       ],
       "heading": "Hi, i''m danish",
       "tagline": "a full-stack developer focused on practical, reliable digital products",
-      "portrait_url": "/images/danish-portrait.png",
+      "portrait_url": "https://res.cloudinary.com/dbdodnaxd/image/upload/c_limit,h_900,w_900/f_auto,q_auto/v1/portfolio/images/danish-portrait",
       "contact_label": "Contact Me"
     },
     "marquee": {
