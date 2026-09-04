@@ -1,12 +1,20 @@
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
-import { NavLink, Link } from "react-router-dom";
-import { navItems } from "../lib/constants";
+import { Link } from "react-router-dom";
+
+const onePageNavItems = [
+  { label: "About", hash: "about" },
+  { label: "Services", hash: "services" },
+  { label: "Projects", hash: "projects" },
+  { label: "Experience", hash: "experience" },
+  { label: "Resume", hash: "resume" },
+  { label: "Testimonials", hash: "testimonials" },
+  { label: "Contact", hash: "contact" }
+];
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
-  const linkClass = ({ isActive }: { isActive: boolean }) =>
-    `rounded-md px-3 py-2 text-sm transition ${isActive ? "bg-accent/12 text-accent" : "text-muted hover:text-white"}`;
+  const linkClass = "rounded-full px-3 py-2 text-sm text-muted transition hover:bg-white/5 hover:text-white";
 
   return (
     <header className="sticky top-0 z-40 border-b border-[#D7E2EA]/10 bg-[#0C0C0C]/90 backdrop-blur">
@@ -26,16 +34,19 @@ export function Navbar() {
           </svg>
           <span className="font-display text-lg font-black uppercase tracking-tight text-[#D7E2EA]">Danish</span>
         </Link>
-        <div className="hidden items-center gap-1 lg:flex">
-          {navItems.map((item) => <NavLink key={item.to} to={item.to} className={linkClass}>{item.label}</NavLink>)}
+        <div className="hidden items-center gap-0.5 xl:flex">
+          {onePageNavItems.map((item) => <a key={item.hash} href={`/#${item.hash}`} className={linkClass}>{item.label}</a>)}
         </div>
-        <button className="lg:hidden" onClick={() => setOpen((value) => !value)} aria-label="Toggle navigation">
+        <a href="/#contact" className="hidden rounded-full bg-[#D7E2EA] px-5 py-2 text-sm font-semibold text-[#0C0C0C] transition hover:bg-white xl:inline-flex">
+          Let's talk
+        </a>
+        <button className="rounded-md p-2 text-[#D7E2EA] xl:hidden" onClick={() => setOpen((value) => !value)} aria-expanded={open} aria-controls="mobile-navigation" aria-label="Toggle navigation">
           {open ? <X /> : <Menu />}
         </button>
       </nav>
       {open ? (
-        <div className="container-shell grid gap-2 pb-4 lg:hidden">
-          {navItems.map((item) => <NavLink key={item.to} to={item.to} onClick={() => setOpen(false)} className={linkClass}>{item.label}</NavLink>)}
+        <div id="mobile-navigation" className="container-shell grid max-h-[calc(100svh-64px)] gap-1 overflow-y-auto pb-4 xl:hidden">
+          {onePageNavItems.map((item) => <a key={item.hash} href={`/#${item.hash}`} onClick={() => setOpen(false)} className={linkClass}>{item.label}</a>)}
         </div>
       ) : null}
     </header>

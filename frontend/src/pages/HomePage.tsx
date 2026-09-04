@@ -6,14 +6,19 @@ import { type ElementType, type MouseEvent, type ReactNode, useEffect, useRef, u
 import { Link } from "react-router-dom";
 import { getHomeContent } from "../api/portfolio";
 import { LoadingSpinner } from "../components/LoadingSpinner";
+import { Seo } from "../components/Seo";
 import { HeroMedia } from "../components/sections/HeroMedia";
-import { portfolioSnapshot } from "../data/portfolioSnapshot";
 import type { HomeContent, HomeProjectItem } from "../types/api";
+import { ContactPage } from "./ContactPage";
+import { ExperiencePage } from "./ExperiencePage";
+import { ProjectsPage } from "./ProjectsPage";
+import { ResumePage } from "./ResumePage";
+import { TestimonialsPage } from "./TestimonialsPage";
 
 function ContactButton({ label = "Contact Me" }: { label?: string }) {
   return (
-    <Link
-      to="/contact"
+    <a
+      href="#contact"
       className="inline-flex items-center justify-center rounded-full px-8 py-3 text-xs font-medium uppercase tracking-widest text-white outline outline-2 outline-offset-[-3px] outline-white sm:px-10 sm:py-3.5 sm:text-sm md:px-12 md:py-4 md:text-base"
       style={{
         background: "linear-gradient(123deg, #18011F 7%, #B600A8 37%, #7621B0 72%, #BE4C00 100%)",
@@ -21,7 +26,7 @@ function ContactButton({ label = "Contact Me" }: { label?: string }) {
       }}
     >
       {label}
-    </Link>
+    </a>
   );
 }
 
@@ -114,45 +119,31 @@ function Magnet({
   );
 }
 
-function AnimatedCharacter({ char, index, length, progress }: { char: string; index: number; length: number; progress: ReturnType<typeof useScroll>["scrollYProgress"] }) {
-  const start = index / length;
-  const end = Math.min(start + 0.12, 1);
-  const opacity = useTransform(progress, [start, end], [0.2, 1]);
-  const displayChar = char === " " ? "\u00A0" : char;
-
-  return (
-    <span className="relative inline-block">
-      <span className="opacity-0">{displayChar}</span>
-      <motion.span className="absolute inset-0" style={{ opacity }}>
-        {displayChar}
-      </motion.span>
-    </span>
-  );
-}
-
 function AnimatedText({ text }: { text: string }) {
   const ref = useRef<HTMLParagraphElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 0.8", "end 0.2"] });
 
   return (
-    <p ref={ref} aria-label={text} className="max-w-[560px] text-center text-[clamp(1rem,2vw,1.35rem)] font-medium leading-relaxed text-[#D7E2EA]">
-      <span aria-hidden="true">
-        {text.split("").map((char, index) => (
-          <AnimatedCharacter key={`${char}-${index}`} char={char} index={index} length={text.length} progress={scrollYProgress} />
-        ))}
-      </span>
-    </p>
+    <motion.p
+      ref={ref}
+      initial={{ opacity: 0.25, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.35 }}
+      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+      className="mx-auto max-w-3xl text-balance text-center text-[clamp(1rem,3vw,1.35rem)] font-medium leading-relaxed text-[#D7E2EA] [overflow-wrap:normal] [word-break:normal]"
+    >
+      {text}
+    </motion.p>
   );
 }
 
 function HeroSection({ content }: { content: HomeContent["hero"] }) {
   return (
-    <section className="relative flex h-[calc(100vh-64px)] min-h-[660px] flex-col overflow-x-clip bg-[#0C0C0C]">
+    <section id="home" className="relative flex h-[calc(100svh-64px)] min-h-[640px] scroll-mt-16 flex-col overflow-x-clip bg-[#0C0C0C]">
       <FadeIn as="nav" delay={0} y={-20} className="relative z-20 flex justify-between px-6 pt-6 text-sm font-medium uppercase tracking-wider text-[#D7E2EA] md:px-10 md:pt-8 md:text-lg lg:text-[1.4rem]">
         {content.nav.map((item) => (
-          <Link key={item.label} to={item.to} className="transition duration-200 hover:opacity-70">
+          <a key={item.label} href={`#${item.to === "/services" ? "services" : item.to.replace("/", "")}`} className="transition duration-200 hover:opacity-70">
             {item.label}
-          </Link>
+          </a>
         ))}
       </FadeIn>
 
@@ -165,14 +156,14 @@ function HeroSection({ content }: { content: HomeContent["hero"] }) {
       <div className="absolute bottom-[118px] left-1/2 z-10 w-[240px] -translate-x-1/2 sm:bottom-0 sm:w-[360px] md:w-[440px] lg:w-[520px]">
         <FadeIn delay={0.6} y={30}>
           <Magnet padding={150} strength={3} activeTransition="transform 0.3s ease-out" inactiveTransition="transform 0.6s ease-in-out">
-            <HeroMedia fallbackSrc={content.portrait_url} alt="Danish 3D portrait" className="w-full select-none object-contain" />
+            <HeroMedia alt="Danish 3D portrait" className="w-full select-none object-contain" />
           </Magnet>
         </FadeIn>
       </div>
 
-      <div className="relative z-20 mt-auto flex items-end justify-between pb-7 pl-6 pr-24 sm:pb-8 sm:pr-28 md:pb-10 md:pl-10 md:pr-32">
+      <div className="relative z-20 mt-auto flex flex-col items-start gap-5 px-6 pb-7 sm:px-8 sm:pb-8 md:flex-row md:items-end md:justify-between md:px-10 md:pb-10 md:pr-32">
         <FadeIn delay={0.35} y={20}>
-          <p className="max-w-[160px] text-[clamp(0.75rem,1.4vw,1.5rem)] font-light uppercase leading-snug tracking-wide text-[#D7E2EA] sm:max-w-[220px] md:max-w-[260px]">
+          <p className="max-w-md text-[clamp(0.85rem,2vw,1.5rem)] font-light uppercase leading-snug tracking-wide text-[#D7E2EA] md:max-w-[260px]">
             {content.tagline}
           </p>
         </FadeIn>
@@ -232,7 +223,7 @@ function AboutSection({ content, contactLabel }: { content: HomeContent["about"]
   const decor = content.decor;
 
   return (
-    <section className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#0C0C0C] px-5 py-20 sm:px-8 md:px-10">
+    <section id="about" className="relative flex min-h-screen scroll-mt-16 items-center justify-center overflow-hidden bg-[#0C0C0C] px-5 py-20 sm:px-8 md:px-10">
       <FadeIn delay={0.1} x={-80} y={0} duration={0.9} className="absolute left-[1%] top-[4%] w-[120px] sm:left-[2%] sm:w-[160px] md:left-[4%] md:w-[210px]">
         <img src={decor.moon} alt="" loading="lazy" className="w-full" />
       </FadeIn>
@@ -246,11 +237,11 @@ function AboutSection({ content, contactLabel }: { content: HomeContent["about"]
         <img src={decor.group} alt="" loading="lazy" className="w-full" />
       </FadeIn>
 
-      <div className="relative z-10 flex flex-col items-center gap-10 sm:gap-14 md:gap-16">
+      <div className="relative z-10 flex w-full flex-col items-center gap-10 sm:gap-14 md:gap-16">
         <FadeIn as="h2" delay={0} y={40} className="hero-heading text-center text-[clamp(3rem,12vw,160px)] font-black uppercase leading-none tracking-tight">
           {content.heading}
         </FadeIn>
-        <div className="flex flex-col items-center gap-16 sm:gap-20 md:gap-24">
+        <div className="flex w-full max-w-3xl flex-col items-center gap-12 px-3 sm:gap-16 md:gap-20">
           <AnimatedText text={content.body} />
           <ContactButton label={contactLabel} />
         </div>
@@ -261,7 +252,7 @@ function AboutSection({ content, contactLabel }: { content: HomeContent["about"]
 
 function ServicesSection({ content }: { content: HomeContent["services"] }) {
   return (
-    <section className="rounded-t-[40px] bg-white px-5 py-20 sm:rounded-t-[50px] sm:px-8 sm:py-24 md:rounded-t-[60px] md:px-10 md:py-32">
+    <section id="services" className="scroll-mt-16 rounded-t-[40px] bg-white px-5 py-20 sm:rounded-t-[50px] sm:px-8 sm:py-24 md:rounded-t-[60px] md:px-10 md:py-32">
       <FadeIn as="h2" className="mb-16 text-center text-[clamp(3rem,12vw,160px)] font-black uppercase leading-none tracking-tight text-[#0C0C0C] sm:mb-20 md:mb-28">
         {content.heading}
       </FadeIn>
@@ -316,7 +307,7 @@ function ProjectCard({ project, index, totalCards }: { project: HomeProjectItem;
 
 function ProjectsSection({ content }: { content: HomeContent["projects"] }) {
   return (
-    <section className="relative z-10 -mt-10 rounded-t-[40px] bg-[#0C0C0C] px-5 py-20 sm:-mt-12 sm:rounded-t-[50px] sm:px-8 md:-mt-14 md:rounded-t-[60px] md:px-10">
+    <section id="projects" className="relative z-10 -mt-10 scroll-mt-16 rounded-t-[40px] bg-[#0C0C0C] px-5 py-20 sm:-mt-12 sm:rounded-t-[50px] sm:px-8 md:-mt-14 md:rounded-t-[60px] md:px-10">
       <FadeIn as="h2" className="hero-heading mb-16 text-center text-[clamp(3rem,12vw,160px)] font-black uppercase leading-none tracking-tight sm:mb-20 md:mb-28">
         {content.heading}
       </FadeIn>
@@ -330,13 +321,7 @@ function ProjectsSection({ content }: { content: HomeContent["projects"] }) {
 }
 
 export function HomePage() {
-  const { data: content, isLoading } = useQuery({
-    queryKey: ["home"],
-    queryFn: getHomeContent,
-    initialData: portfolioSnapshot.home,
-    initialDataUpdatedAt: 0,
-    refetchOnMount: true
-  });
+  const { data: content, isLoading } = useQuery({ queryKey: ["home"], queryFn: getHomeContent });
 
   if (isLoading) {
     return (
@@ -356,11 +341,16 @@ export function HomePage() {
 
   return (
     <div className="overflow-x-clip bg-[#0C0C0C]">
+      <Seo />
       <HeroSection content={content.hero} />
       {content.marquee.images.length ? <MarqueeSection images={content.marquee.images} /> : null}
       <AboutSection content={content.about} contactLabel={content.hero.contact_label} />
       <ServicesSection content={content.services} />
-      {content.projects.items.length ? <ProjectsSection content={content.projects} /> : null}
+      {content.projects.items.length ? <ProjectsSection content={content.projects} /> : <ProjectsPage />}
+      <div id="experience" className="scroll-mt-16"><ExperiencePage /></div>
+      <div id="resume" className="scroll-mt-16"><ResumePage /></div>
+      <div id="testimonials" className="scroll-mt-16"><TestimonialsPage /></div>
+      <div id="contact" className="scroll-mt-16"><ContactPage /></div>
     </div>
   );
 }

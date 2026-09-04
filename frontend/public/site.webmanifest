@@ -1,0 +1,9 @@
+{
+  "name": "Danish MD — AI Full-stack Developer",
+  "short_name": "Danish MD",
+  "description": "AI full-stack developer portfolio and project case studies.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0c0c0c",
+  "theme_color": "#0c0c0c"
+}

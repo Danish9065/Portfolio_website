@@ -15,7 +15,7 @@ export function ProjectsPage() {
     return data.filter((project) => [project.title, project.category, project.short_description, ...project.tech_stack].join(" ").toLowerCase().includes(term));
   }, [data, query]);
   return (
-    <RevealSection className="container-shell py-14">
+    <RevealSection id="projects" className="container-shell scroll-mt-16 py-14 sm:py-20">
       <SectionHeader eyebrow="Projects" title="Case-study oriented work" body="Search by stack, domain, type, or keyword." />
       <label className="mb-8 flex max-w-xl items-center gap-3 rounded-md border border-line bg-panel px-4 py-3">
         <Search className="h-5 w-5 text-muted" />

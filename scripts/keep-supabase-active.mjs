@@ -10,7 +10,7 @@ for (const file of envFiles) {
 }
 
 const supabaseUrl = pickEnv("SUPABASE_URL", "VITE_SUPABASE_URL");
-const supabaseKey = pickEnv("SUPABASE_ANON_KEY", "VITE_SUPABASE_ANON_KEY", "SUPABASE_SERVICE_ROLE_KEY");
+const supabaseKey = pickEnv("SUPABASE_PUBLISHABLE_KEY", "VITE_SUPABASE_PUBLISHABLE_KEY", "SUPABASE_ANON_KEY", "VITE_SUPABASE_ANON_KEY");
 const table = process.env.SUPABASE_KEEPALIVE_TABLE || "profiles";
 const select = process.env.SUPABASE_KEEPALIVE_SELECT || "id";
 
@@ -19,7 +19,7 @@ if (!supabaseUrl) {
 }
 
 if (!supabaseKey) {
-  fail("Missing SUPABASE_ANON_KEY, VITE_SUPABASE_ANON_KEY, or SUPABASE_SERVICE_ROLE_KEY.");
+  fail("Missing a Supabase publishable or anon key.");
 }
 
 const endpoint = new URL(`/rest/v1/${encodeURIComponent(table)}`, supabaseUrl);

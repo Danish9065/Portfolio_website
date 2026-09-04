@@ -79,7 +79,7 @@ function inspectDataUrl(file: string, type: UploadType) {
 }
 
 function getAdminEmails() {
-  return (process.env.ADMIN_EMAILS || process.env.VITE_ADMIN_EMAILS || "")
+  return (process.env.ADMIN_EMAILS || "")
     .split(",")
     .map((email) => email.trim().toLowerCase())
     .filter(Boolean);
@@ -92,7 +92,7 @@ async function verifyAdmin(req: ApiRequest) {
   }
 
   const supabaseUrl = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "").trim().replace(/\/+$/, "");
-  const supabaseKey = (process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || "").trim();
+  const supabaseKey = (process.env.SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_ANON_KEY || "").trim();
   const adminEmails = getAdminEmails();
 
   if (!/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(supabaseUrl) || !supabaseKey) {

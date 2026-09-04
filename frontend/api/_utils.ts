@@ -61,7 +61,7 @@ export function getBearerToken(req: ApiRequest) {
 }
 
 export function getAdminEmails() {
-  return (process.env.ADMIN_EMAILS || process.env.VITE_ADMIN_EMAILS || "")
+  return (process.env.ADMIN_EMAILS || "")
     .split(",")
     .map((email) => email.trim().toLowerCase())
     .filter(Boolean);
@@ -72,7 +72,7 @@ export async function requireAdmin(req: ApiRequest): Promise<AdminCheck> {
   if (!token) return { ok: false, status: 401, error: "Unauthorized" };
 
   const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+  const supabaseKey = process.env.SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_ANON_KEY;
   const adminEmails = getAdminEmails();
 
   if (!supabaseUrl || !supabaseKey) {

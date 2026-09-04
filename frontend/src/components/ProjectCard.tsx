@@ -7,7 +7,7 @@ export function ProjectCard({ project, highlighted = false }: { project: Project
     <article className={`panel grid overflow-hidden rounded-lg transition ${highlighted ? "border-accent/45 shadow-glow" : ""}`}>
       <Link to={`/projects/${project.slug}`} className="block">
         <div className="aspect-[16/9] bg-gradient-to-br from-panel2 via-panel to-accent/20">
-          {project.image_url ? <img src={project.image_url} alt={`${project.title} screenshot`} className="h-full w-full object-cover" /> : null}
+          {project.image_url ? <img src={project.image_url} alt={`${project.title} screenshot`} width="1200" height="675" loading="lazy" decoding="async" className="h-full w-full object-cover" /> : null}
         </div>
       </Link>
       <div className="p-5">
@@ -20,7 +20,7 @@ export function ProjectCard({ project, highlighted = false }: { project: Project
         </div>
         <div className="mt-5 flex gap-3 text-sm">
           <Link to={`/projects/${project.slug}`} className="inline-flex items-center gap-1 text-accent">Case study <ArrowUpRight className="h-4 w-4" /></Link>
-          {project.github_url ? <a href={project.github_url} className="inline-flex items-center gap-1 text-muted hover:text-white"><Github className="h-4 w-4" /> GitHub</a> : null}
+          {project.github_url ? <a href={project.github_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-muted hover:text-white"><Github className="h-4 w-4" /> GitHub</a> : null}
         </div>
       </div>
     </article>

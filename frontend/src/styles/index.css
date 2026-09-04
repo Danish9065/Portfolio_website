@@ -21,9 +21,23 @@ html,
 body,
 #root {
   background: #0c0c0c;
-  min-width: 320px;
+  min-width: 0;
   min-height: 100vh;
   font-family: "Kanit", ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 4rem;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+::selection {
+  background: rgba(182, 0, 168, 0.45);
+  color: #ffffff;
 }
 
 h1,
@@ -81,4 +95,21 @@ select {
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+.one-page-section {
+  border-top: 1px solid rgba(215, 226, 234, 0.1);
+}
+
+@media (max-width: 639px) {
+  .panel,
+  .glass-card {
+    border-radius: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }

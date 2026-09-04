@@ -11,11 +11,12 @@ const RESUME_FILENAME = "Danish-MD-Resume.pdf";
 export function ResumePage() {
   const profile = useQuery({ queryKey: ["profile"], queryFn: getProfile });
   const skills = useQuery({ queryKey: ["skills"], queryFn: getSkills });
-  const resumeUrl = profile.data?.resume_url || "/Danish-MD-Resume.pdf";
+  const resumeUrl = profile.data?.resume_url ?? null;
   const [downloading, setDownloading] = useState(false);
 
   async function downloadResume(event: MouseEvent<HTMLAnchorElement>) {
     event.preventDefault();
+    if (!resumeUrl) return;
     setDownloading(true);
 
     try {
@@ -46,7 +47,7 @@ export function ResumePage() {
           <h3 className="text-2xl font-semibold text-white">{profile.data?.full_name ?? "Danish MD"}</h3>
           <p className="mt-2 text-accent">{profile.data?.title ?? "Full-stack developer"}</p>
           <p className="mt-4 text-sm leading-6 text-muted">{profile.data?.bio}</p>
-          <a href={resumeUrl} download={RESUME_FILENAME} onClick={downloadResume} target="_blank" rel="noreferrer" className="mt-6 inline-flex items-center gap-2 rounded-md bg-accent px-4 py-3 font-semibold text-ink"><Download className="h-4 w-4" /> {downloading ? "Downloading..." : "Download resume"}</a>
+          {resumeUrl ? <a href={resumeUrl} download={RESUME_FILENAME} onClick={downloadResume} target="_blank" rel="noreferrer" className="mt-6 inline-flex items-center gap-2 rounded-md bg-accent px-4 py-3 font-semibold text-ink"><Download className="h-4 w-4" /> {downloading ? "Downloading..." : "Download resume"}</a> : <p className="mt-6 text-sm text-muted">Resume upload is not configured yet.</p>}
         </div>
         <div className="panel rounded-lg p-6">
           <h3 className="font-semibold text-white">Core stack</h3>

@@ -4,11 +4,11 @@ import { getSiteContent, type SiteContentKey } from "../../api/siteContent";
 import { supabase } from "../../lib/supabase";
 import type { SiteContentMedia } from "../../types/api";
 
-function mediaSrc(media: SiteContentMedia | null | undefined, fallbackSrc?: string) {
-  return media?.optimized_url || media?.media_url || fallbackSrc || null;
+function mediaSrc(media: SiteContentMedia | null | undefined) {
+  return media?.optimized_url || media?.media_url || null;
 }
 
-export function HeroMedia({ sectionKey = "hero_media", fallbackSrc, alt = "Danish portfolio media", className }: { sectionKey?: SiteContentKey; fallbackSrc?: string; alt?: string; className?: string }) {
+export function HeroMedia({ sectionKey = "hero_media", alt = "Danish portfolio media", className }: { sectionKey?: SiteContentKey; alt?: string; className?: string }) {
   const client = useQueryClient();
   const { data } = useQuery({ queryKey: ["site-content", sectionKey], queryFn: () => getSiteContent(sectionKey) });
 
@@ -36,7 +36,7 @@ export function HeroMedia({ sectionKey = "hero_media", fallbackSrc, alt = "Danis
     };
   }, [client, sectionKey]);
 
-  const src = mediaSrc(data, fallbackSrc);
+  const src = mediaSrc(data);
   if (!src) return null;
 
   return (

@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import { createSupabaseAdminClient } from "./_utils.js";
 
 type ApiRequest = {
   method?: string;
@@ -23,60 +24,29 @@ const SYSTEM_RULES = (
   "Never invent employment history, clients, metrics, awards, certifications, pricing, timelines, or years of experience."
 );
 
-const portfolioContext = {
-  profile: {
-    full_name: "Danish MD",
-    title: "AI Full-stack Developer",
-    bio: "An AI full-stack developer building intelligent, practical, and user-friendly digital products.",
-    location: "India",
-    email: "danish90654@gmail.com",
-    linkedin_url: "https://www.linkedin.com/in/danish90654/",
-    github_url: "https://github.com/Danish9065",
-  },
-  services: [
-    "AI/ML application development",
-    "Frontend development with React, TypeScript, Vite, and Tailwind CSS",
-    "Backend development with Python, FastAPI, Node.js, REST APIs, and validation",
-    "Web design",
-    "Motion design",
-    "3D modeling",
-    "Branding",
-    "Database and cloud work with Supabase, PostgreSQL, Cloudinary, Vercel, and Render",
-  ],
-  skills: [
-    "React",
-    "Next.js",
-    "TypeScript",
-    "JavaScript",
-    "Tailwind CSS",
-    "Framer Motion",
-    "Python",
-    "FastAPI",
-    "Node.js",
-    "REST APIs",
-    "PostgreSQL",
-    "Supabase",
-    "Cloudinary",
-    "Vercel",
-    "Git",
-    "GitHub",
-    "AI application development",
-    "Machine learning",
-  ],
-  projects: [
-    "Flat Expense Calculator",
-    "AuraPalette",
-    "Portfolio Web App",
-    "Zaheer's Jewellers",
-    "Little Mumbai Choice",
-    "MediPresence Clinic App",
-    "HealthSaathi",
-    "Portfolio AI Assistant",
-  ],
-  experience: [],
-};
-
 const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
+
+async function getPortfolioContext() {
+  const supabase = createSupabaseAdminClient();
+  const [profile, services, skills, projects, experience] = await Promise.all([
+    supabase.from("profiles").select("full_name,title,bio,location,email,linkedin_url,github_url").limit(1).maybeSingle(),
+    supabase.from("services").select("title,description,features").order("sort_order"),
+    supabase.from("skills").select("name,category").order("sort_order"),
+    supabase.from("projects").select("title,short_description,category,tech_stack").order("sort_order"),
+    supabase.from("experience").select("role,company,type,description,highlights,start_date,end_date,current").order("start_date", { ascending: false }),
+  ]);
+
+  const firstError = [profile.error, services.error, skills.error, projects.error, experience.error].find(Boolean);
+  if (firstError) throw firstError;
+
+  return {
+    profile: profile.data,
+    services: services.data ?? [],
+    skills: skills.data ?? [],
+    projects: projects.data ?? [],
+    experience: experience.data ?? [],
+  };
+}
 
 function parseBody(body: ApiRequest["body"] | string | undefined) {
   if (typeof body !== "string") return body || {};
@@ -159,6 +129,7 @@ async function handleChat(req: ApiRequest, res: ApiResponse) {
   }
 
   let answer = "I could not produce an answer from the configured portfolio context.";
+  const portfolioContext = await getPortfolioContext();
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
   const prompt = `${SYSTEM_RULES}\n\nPortfolio context JSON:\n${JSON.stringify(portfolioContext)}\n\nQuestion: ${message}`;
   const payload = {

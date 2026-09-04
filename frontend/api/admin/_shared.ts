@@ -15,7 +15,15 @@ type HandlerContext = {
 type AdminHandler = (context: HandlerContext) => Promise<void>;
 
 const optionalText = z.string().trim().max(500).nullable().optional();
-const urlText = z.string().trim().max(1000).nullable().optional();
+const urlText = z.string().trim().max(1000).refine((value) => {
+  if (!value) return true;
+  try {
+    const protocol = new URL(value).protocol;
+    return protocol === "https:" || protocol === "http:";
+  } catch {
+    return false;
+  }
+}, "Must be a valid HTTP(S) URL.").nullable().optional();
 
 export const idSchema = z.string().uuid();
 
@@ -155,7 +163,7 @@ export async function withAdmin(req: ApiRequest, res: ApiResponse, handler: Admi
     await handler({ req, res, supabase: createSupabaseAdminClient() });
   } catch (error) {
     console.error("Admin API error:", error);
-    res.status(500).json({ error: error instanceof Error ? error.message : "Admin request failed" });
+    res.status(500).json({ error: "Admin request failed" });
   }
 }
 
