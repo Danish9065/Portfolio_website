@@ -61,7 +61,10 @@ export function getBearerToken(req: ApiRequest) {
 }
 
 export function getAdminEmails() {
-  return (process.env.ADMIN_EMAILS || "")
+  // VITE_ADMIN_EMAILS is already exposed to the client to gate the admin UI.
+  // Reuse it server-side when a separate ADMIN_EMAILS value was not configured,
+  // while still validating every request with Supabase Auth below.
+  return (process.env.ADMIN_EMAILS || process.env.VITE_ADMIN_EMAILS || "")
     .split(",")
     .map((email) => email.trim().toLowerCase())
     .filter(Boolean);

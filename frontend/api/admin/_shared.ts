@@ -25,6 +25,17 @@ const urlText = z.string().trim().max(1000).refine((value) => {
   }
 }, "Must be a valid HTTP(S) URL.").nullable().optional();
 
+const assetUrlText = z.string().trim().max(1000).refine((value) => {
+  if (!value) return true;
+  if (value.startsWith("/") && !value.startsWith("//") && !value.includes("\\")) return true;
+  try {
+    const protocol = new URL(value).protocol;
+    return protocol === "https:" || protocol === "http:";
+  } catch {
+    return false;
+  }
+}, "Must be a valid HTTP(S) URL or a site-relative asset path.").nullable().optional();
+
 export const idSchema = z.string().uuid();
 
 export const projectSchema = z.object({
@@ -84,7 +95,7 @@ export const profileSchema = z.object({
   linkedin_url: urlText,
   github_url: urlText,
   website_url: urlText,
-  resume_url: urlText,
+  resume_url: assetUrlText,
 });
 
 const homeNavItemSchema = z.object({

@@ -12,6 +12,7 @@ from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, Tabl
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "frontend" / "public" / "Danish-MD-Resume.pdf"
+PORTFOLIO_URL = "https://danish-portfolio9065.vercel.app"
 
 INK = colors.HexColor("#172033")
 MUTED = colors.HexColor("#4B5565")
@@ -131,9 +132,9 @@ story = [
     Paragraph("AI Full-Stack Developer | Generative AI | NLP | Applied Machine Learning", title_style),
     Paragraph(
         '<link href="mailto:danish90654@gmail.com">danish90654@gmail.com</link>  |  +91-9065440786  |  '
-        '<link href="https://github.com/Danish9065">GitHub</link>  |  '
-        '<link href="https://www.linkedin.com/in/danish90654/">LinkedIn</link>  |  '
-        '<link href="https://danish-portfolio9065.vercel.app/">Portfolio</link>',
+        '<link href="https://github.com/Danish9065">github.com/Danish9065</link><br/>'
+        '<link href="https://www.linkedin.com/in/danish90654/">linkedin.com/in/danish90654</link>  |  '
+        f'<link href="{PORTFOLIO_URL}">danish-portfolio9065.vercel.app</link>',
         contact_style,
     ),
 ]
